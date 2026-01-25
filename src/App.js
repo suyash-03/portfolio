@@ -63,7 +63,7 @@ const Navigation = () => {
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-container">
         <a href="#home" className="nav-logo">
-          <span className="logo-text">Suyash</span>
+          <span className="logo-text">Suyash Singh</span>
           <span className="logo-dot">.</span>
         </a>
         <div className={`nav-menu ${menuOpen ? 'active' : ''}`}>
