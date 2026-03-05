@@ -1,711 +1,706 @@
 import { useEffect, useState, useRef } from 'react';
-import './App.css';
+import {
+  ThemeProvider, createTheme, CssBaseline, Container, Box, Typography,
+  Button, Stack, Card, CardContent, Chip, AppBar, Toolbar, IconButton,
+  Drawer, List, ListItemButton, ListItemText, Paper,
+} from '@mui/material';
+import { motion, useScroll, useTransform, useInView, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
+import {
+  Mail, Linkedin, Github, Phone, FileText, ExternalLink,
+  FolderOpen, GraduationCap, Menu, X, ArrowRight, Download,
+  Code, Database, Cpu, Wrench,
+} from 'lucide-react';
 import profilePhoto from './profile.png';
+import './App.css';
 
-// Custom hook for intersection observer animations
-const useIntersectionObserver = (options = {}) => {
-  const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
+// ---- Theme ----
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: { main: '#6366f1', light: '#818cf8', dark: '#4f46e5' },
+    secondary: { main: '#06b6d4' },
+    background: { default: '#0f0f1a', paper: '#16213e' },
+    text: { primary: '#e2e8f0', secondary: '#94a3b8' },
+  },
+  typography: {
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    h1: { fontWeight: 800 },
+    h2: { fontWeight: 700 },
+    h3: { fontWeight: 600 },
+  },
+  shape: { borderRadius: 12 },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: { textTransform: 'none', fontWeight: 600, borderRadius: 12, padding: '12px 28px' },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          border: '1px solid #1f2b4d',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:hover': { borderColor: '#6366f1', boxShadow: '0 0 40px rgba(99, 102, 241, 0.15)' },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'none' } },
+    },
+  },
+});
 
-  useEffect(() => {
-    const currentRef = ref.current;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsVisible(true);
-      }
-    }, { threshold: 0.1, ...options });
-
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [options]);
-
-  return [ref, isVisible];
+const gradient = 'linear-gradient(135deg, #6366f1 0%, #06b6d4 50%, #f472b6 100%)';
+const gradientText = {
+  background: gradient,
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
 };
 
-// Animated Section Component
-const AnimatedSection = ({ children, className = '', delay = 0 }) => {
-  const [ref, isVisible] = useIntersectionObserver();
-  
-  return (
-    <div 
-      ref={ref} 
-      className={`animated-section ${isVisible ? 'visible' : ''} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
+// ---- Animation Variants ----
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
+};
+
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+};
+
+// ---- Data ----
+const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Education', 'Contact'];
+
+const experiences = [
+  {
+    title: 'Software Engineer 2', company: 'Micron', location: 'Bangalore, India', period: 'Jul 2024 - Present',
+    points: [
+      'Spearheading development of Summit, a unified automation platform using FastAPI, React.js and PostgreSQL for automated test workflows, execution, and real-time monitoring',
+      'Implemented ArtiFlow, an event-driven automation feature integrating JFrog Artifactory webhooks, resulting in 2\u00d7 improvement in operational efficiency',
+      'Engineered scalable Test Case Management solution with async parallel processing, reducing load times by 50%',
+      'Achieved 30% reduction in API response times and scaled system to handle 2\u00d7 traffic with 99.99% uptime',
+    ],
+  },
+  {
+    title: 'Software Engineering Intern', company: 'Legistify (YC X22)', location: 'Gurgaon, India', period: 'Jan 2024 - Jun 2024',
+    points: [
+      'Built SmartCC, a Node.js micro-service using Gmail APIs and Google Cloud Pub/Sub for real-time email processing',
+      'Implemented rule-based triggers and event-driven e-signature reminders improving user experience',
+      'Integrated backend services to extract and persist email metadata in MongoDB with robust indexing and caching',
+    ],
+  },
+  {
+    title: 'Software Engineering Intern', company: 'Soci\u00e9t\u00e9 G\u00e9n\u00e9rale', location: 'Bangalore, India', period: 'Jul 2023 - Aug 2023',
+    points: [
+      'Developed scalable backend analytics pipeline using C#, Git CLI, and structured data processing',
+      'Architected production-grade desktop application using .NET WPF and MVVM architecture with SQLite storage',
+      'Implemented real-time data visualization dashboards using LiveCharts2 for performance benchmarking across global teams',
+    ],
+  },
+  {
+    title: 'Machine Learning Intern', company: 'Indian Army', location: 'Remote', period: 'Jun 2022 - Jul 2022',
+    points: [
+      'Trained YOLOv5-based object detection model for real-time drone detection, achieving 0.67 mAP on custom aerial surveillance dataset',
+      'Optimized model for edge deployment using TensorRT and TensorFlow Lite, achieving 120% improvement in inference speed',
+      'Designed data augmentation pipeline using Albumentations to enhance model robustness against adverse weather conditions',
+    ],
+  },
+];
+
+const projects = [
+  {
+    title: 'BITS SU App',
+    description: "Official mobile application of the Students' Union, BITS Pilani, used daily by 5000+ students facilitating INR 60L+ in monthly transactions.",
+    tech: ['Flutter', 'Dart', 'Firebase', 'Google Maps API'],
+    highlights: [
+      'Built scalable production features: newsletters, merchandise signups, event registrations, cab bookings, food ordering',
+      'Implemented secure QR code-based authentication and Google Sign-In SSO',
+      'Integrated Firebase Cloud Messaging for real-time notifications',
+      'Google Maps API integration for live cab tracking and booking',
+    ],
+    link: 'https://play.google.com/store/apps/details?id=org.subitspilani.bits_su_app&hl=en_IN',
+  },
+  {
+    title: 'StudyDeck',
+    description: 'Official app of the Academic Department BITS Pilani, facilitating timetable creation and semester planning.',
+    tech: ['Flutter', 'Dart', 'Provider', 'sqflite'],
+    highlights: [
+      'Developed cross-platform Flutter app with interactive timetable visualization and automated conflict resolution',
+      'Architected using MVC pattern, integrated Provider for efficient state management',
+      'Implemented local response caching with sqflite, reducing server load and improving offline UX',
+    ],
+    link: 'https://studydeck.bits-sutechteam.org/',
+  },
+  {
+    title: 'PingHire',
+    description: 'High-performance candidate-job matching engine using weighted scoring algorithms for precise relevance ranking.',
+    tech: ['Python', 'Git', 'JSON', 'Design Patterns'],
+    highlights: [
+      'Architected matching engine evaluating candidates across skills, experience, and education',
+      'Built scalable JSON-based data ingestion pipeline for high-throughput matching',
+      'Engineered pluggable notification adapter with O(1) integration of new channels',
+    ],
+    link: 'https://github.com/suyash-03/job-recommendation-backend',
+  },
+];
+
+const skillCategories = [
+  { title: 'Languages', icon: Code, skills: [{ name: 'Python', level: 95 }, { name: 'JavaScript', level: 90 }, { name: 'Java', level: 85 }, { name: 'C/C++', level: 80 }, { name: 'Dart', level: 75 }] },
+  { title: 'Frameworks & Tech', icon: Cpu, skills: [{ name: 'FastAPI', level: 95 }, { name: 'React.js', level: 90 }, { name: 'Node.js', level: 85 }, { name: 'Flutter', level: 80 }, { name: 'Django', level: 75 }] },
+  { title: 'Databases', icon: Database, skills: [{ name: 'PostgreSQL', level: 90 }, { name: 'MongoDB', level: 85 }, { name: 'MySQL', level: 85 }, { name: 'DynamoDB', level: 75 }, { name: 'Redis', level: 80 }] },
+  { title: 'Tools & DevOps', icon: Wrench, skills: [{ name: 'Git', level: 95 }, { name: 'Docker', level: 85 }, { name: 'AWS S3', level: 80 }, { name: 'Linux', level: 85 }, { name: 'CI/CD', level: 85 }] },
+];
+
+const interests = [
+  { icon: '\uD83D\uDCAA', label: 'Gymming' }, { icon: '\u26F8\uFE0F', label: 'Skating' },
+  { icon: '\uD83C\uDFF8', label: 'Badminton' }, { icon: '\uD83C\uDFCA', label: 'Swimming' }, { icon: '\uD83C\uDFAE', label: 'Gaming' },
+];
+
+const contactLinks = [
+  { icon: Mail, label: 'Email', value: 'suyash.singh9450@gmail.com', href: 'mailto:suyash.singh9450@gmail.com' },
+  { icon: Linkedin, label: 'LinkedIn', value: 'Connect on LinkedIn', href: 'https://www.linkedin.com/in/suyash-singh-bb9477203/', external: true },
+  { icon: Github, label: 'GitHub', value: 'github.com/suyash-03', href: 'https://github.com/suyash-03', external: true },
+  { icon: Phone, label: 'Phone', value: '+91 7007038266', href: 'tel:+917007038266' },
+  { icon: FileText, label: 'Resume', value: 'View My Resume', href: 'https://drive.google.com/file/d/1BfFVKido3JBLXqRoP-2U2lB2pFr0PoN2/view?usp=share_link', external: true, highlight: true },
+];
+
+// ---- Reusable ----
+const SectionTitle = ({ number, children }) => (
+  <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} variants={fadeUp}>
+    <Typography variant="h2" sx={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', mb: 7, display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box component="span" sx={{ fontFamily: "'Fira Code', monospace", fontSize: '1rem', color: 'primary.main', fontWeight: 400 }}>{number}</Box>
       {children}
-    </div>
+    </Typography>
+  </motion.div>
+);
+
+const SkillBar = ({ skill, delay }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  return (
+    <Box ref={ref}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+        <Typography variant="body2" fontWeight={500}>{skill.name}</Typography>
+        <Typography variant="body2" sx={{ color: 'primary.light', fontFamily: "'Fira Code', monospace" }}>{skill.level}%</Typography>
+      </Box>
+      <Box sx={{ height: 6, bgcolor: '#1f2b4d', borderRadius: 1, overflow: 'hidden' }}>
+        <motion.div
+          initial={{ width: 0 }}
+          animate={inView ? { width: `${skill.level}%` } : {}}
+          transition={{ duration: 1, delay: delay * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+          style={{ height: '100%', background: gradient, borderRadius: 4 }}
+        />
+      </Box>
+    </Box>
   );
 };
 
-// Navigation Component
+// ---- Navigation ----
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Education', 'Contact'];
-
   return (
-    <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-      <div className="nav-container">
-        <a href="#home" className="nav-logo">
-          <span className="logo-text">Suyash Singh</span>
-          <span className="logo-dot">.</span>
-        </a>
-        <div className={`nav-menu ${menuOpen ? 'active' : ''}`}>
+    <>
+      <AppBar
+        position="fixed" elevation={0}
+        sx={{
+          bgcolor: scrolled ? 'rgba(15, 15, 26, 0.9)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+          boxShadow: scrolled ? '0 4px 20px rgba(0,0,0,0.4)' : 'none',
+          transition: 'all 0.3s',
+        }}
+      >
+        <Toolbar sx={{ maxWidth: 'lg', width: '100%', mx: 'auto', px: { xs: 2, md: 3 } }}>
+          <Typography component="a" href="#home" sx={{ flexGrow: 1, ...gradientText, fontWeight: 800, textDecoration: 'none', fontSize: '1.5rem' }}>
+            Suyash Singh<Box component="span" sx={{ color: 'primary.main', WebkitTextFillColor: 'initial' }}>.</Box>
+          </Typography>
+          <Stack direction="row" spacing={4} sx={{ display: { xs: 'none', md: 'flex' } }}>
+            {navLinks.map((link) => (
+              <Typography
+                key={link} component="a" href={`#${link.toLowerCase()}`}
+                sx={{
+                  color: 'text.secondary', fontSize: '0.9rem', fontWeight: 500, textDecoration: 'none',
+                  position: 'relative', transition: 'color 0.3s', '&:hover': { color: 'text.primary' },
+                  '&::after': {
+                    content: '""', position: 'absolute', bottom: -4, left: 0, width: '0%', height: 2,
+                    background: gradient, transition: 'width 0.3s ease',
+                  },
+                  '&:hover::after': { width: '100%' },
+                }}
+              >
+                {link}
+              </Typography>
+            ))}
+          </Stack>
+          <IconButton sx={{ display: { md: 'none' }, color: 'text.primary' }} onClick={() => setDrawerOpen(true)}>
+            <Menu size={24} />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)} PaperProps={{ sx: { bgcolor: 'background.paper', width: 280 } }}>
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <IconButton onClick={() => setDrawerOpen(false)} sx={{ color: 'text.primary' }}><X size={24} /></IconButton>
+        </Box>
+        <List>
           {navLinks.map((link) => (
-            <a 
-              key={link} 
-              href={`#${link.toLowerCase()}`} 
-              className="nav-link"
-              onClick={() => setMenuOpen(false)}
-            >
-              {link}
-            </a>
+            <ListItemButton key={link} component="a" href={`#${link.toLowerCase()}`} onClick={() => setDrawerOpen(false)}>
+              <ListItemText primary={link} sx={{ textAlign: 'center' }} />
+            </ListItemButton>
           ))}
-        </div>
-        <button className="nav-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-          <span className={`hamburger ${menuOpen ? 'active' : ''}`}></span>
-        </button>
-      </div>
-    </nav>
+        </List>
+      </Drawer>
+    </>
   );
 };
 
-// Hero Section
+// ---- Cursor Glow (used by App, passed down to Hero) ----
+const useCursorGlow = () => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const smoothX = useSpring(mouseX, { stiffness: 100, damping: 30 });
+  const smoothY = useSpring(mouseY, { stiffness: 100, damping: 30 });
+  const spotlightBg = useMotionTemplate`radial-gradient(650px circle at ${smoothX}px ${smoothY}px, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.06) 40%, transparent 80%)`;
+
+  const handleMouseMove = (e) => {
+    mouseX.set(e.clientX);
+    mouseY.set(e.clientY);
+  };
+
+  return { spotlightBg, handleMouseMove };
+};
+
+// ---- Hero ----
 const Hero = () => {
   const [text, setText] = useState('');
   const fullText = "Hi, I'm Suyash Singh";
-  
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+
   useEffect(() => {
-    let index = 0;
+    let i = 0;
     const timer = setInterval(() => {
-      setText(fullText.slice(0, index));
-      index++;
-      if (index > fullText.length) {
-        clearInterval(timer);
-      }
+      setText(fullText.slice(0, i));
+      i++;
+      if (i > fullText.length) clearInterval(timer);
     }, 100);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section id="home" className="hero">
-      <div className="hero-bg">
-        <div className="gradient-orb orb-1"></div>
-        <div className="gradient-orb orb-2"></div>
-        <div className="gradient-orb orb-3"></div>
-        <div className="grid-overlay"></div>
-      </div>
-      <div className="hero-content">
-        <div className="hero-badge">
-          <span className="badge-dot"></span>
-          Software Engineer 2 @ Micron
-        </div>
-        <h1 className="hero-title">
-          <span className="typing-text">{text}</span>
-          <span className="cursor">|</span>
-        </h1>
-        <div className="hero-description">
-          <p className="desc-line">
-            I'm a software engineer based in <span className="highlight">Bangalore</span>, currently focused on building 
-            scalable automation platforms and performance-critical backend systems.
-          </p>
-          <p className="desc-line">
-            A <span className="highlight">BITS Pilani</span> graduate, I work across the stack from system design and APIs 
-            to databases and user-facing applications with an emphasis on efficiency, 
-            reliability, and clean architecture.
-          </p>
-          <p className="desc-line">
-            I love working on problems where <span className="highlight">scale</span>, <span className="highlight">correctness</span>, and <span className="highlight">developer experience</span> truly matter.
-          </p>
-        </div>
-        <div className="hero-cta">
-          <a href="#contact" className="btn btn-primary">
-            <span>Get in Touch</span>
-            <svg viewBox="0 0 24 24" className="btn-icon">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-          <a href="#experience" className="btn btn-secondary">
-            View My Work
-          </a>
-        </div>
-        <div className="hero-stats">
-          <div className="stat">
-            <span className="stat-number">2+</span>
-            <span className="stat-label">Years Experience</span>
-          </div>
-          <div className="stat">
-            <span className="stat-number">15+</span>
-            <span className="stat-label">Technologies</span>
-          </div>
-        </div>
-      </div>
-      <div className="scroll-indicator">
-        <div className="mouse">
-          <div className="wheel"></div>
-        </div>
-        <span>Scroll to explore</span>
-      </div>
-    </section>
-  );
-};
+    <Box
+      id="home"
+      sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative', overflow: 'hidden', px: 3, pt: 12, pb: 12 }}
+    >
+      <Box className="hero-bg">
+        <div className="gradient-orb orb-1" />
+        <div className="gradient-orb orb-2" />
+        <div className="gradient-orb orb-3" />
+        <div className="grid-overlay" />
+      </Box>
 
-// About Section
-const About = () => {
-  const interests = [
-    { icon: '💪', label: 'Gymming' },
-    { icon: '⛸️', label: 'Skating' },
-    { icon: '🏸', label: 'Badminton' },
-    { icon: '🏊', label: 'Swimming' },
-    { icon: '🎮', label: 'Gaming' }
-  ];
+      <motion.div style={{ y, opacity: heroOpacity, position: 'relative', zIndex: 2, textAlign: 'center', maxWidth: 800, width: '100%' }}>
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <Chip
+            label={<><span className="badge-dot" />&nbsp; Software Engineer 2 @ Micron</>}
+            variant="outlined"
+            sx={{ mb: 3, py: 2.5, px: 1, fontSize: '0.85rem', borderColor: 'rgba(99, 102, 241, 0.3)', bgcolor: 'rgba(99, 102, 241, 0.1)', color: 'primary.light' }}
+          />
+        </motion.div>
 
-  return (
-    <section id="about" className="section about">
-      <div className="container">
-        <AnimatedSection>
-          <h2 className="section-title">
-            <span className="title-number">01.</span>
-            About Me
-          </h2>
-        </AnimatedSection>
-        <div className="about-content">
-          <AnimatedSection className="about-image" delay={200}>
-            <div className="image-wrapper">
-              <img src={profilePhoto} alt="Suyash Singh" className="profile-photo" />
-              <div className="image-border"></div>
-            </div>
-          </AnimatedSection>
-          <div className="about-text">
-            <AnimatedSection delay={300}>
-              <p className="about-intro">
-                Hey! I'm <span className="text-gradient">Suyash Singh</span>, a Software Engineer 2 at 
-                <span className="text-highlight"> Micron</span>, currently based in Bangalore.
-              </p>
-            </AnimatedSection>
-            <AnimatedSection delay={400}>
-              <p>
-                I graduated from <span className="text-highlight">BITS Pilani</span> with a B.E. in 
-                Electrical & Electronics Engineering, and I enjoy building software that's thoughtful, 
-                scalable, and a pleasure to work with.
-              </p>
-            </AnimatedSection>
-            <AnimatedSection delay={500}>
-              <p>
-                I spend most of my time designing backend systems and full-stack applications, working with {' '}
-                <span className="tech-mention">FastAPI</span>, <span className="tech-mention">React.js</span>, {' '}
-                <span className="tech-mention">Node.js</span>, <span className="tech-mention">Django</span>, {' '}
-                <span className="tech-mention">Flutter</span>, <span className="tech-mention">Spring Boot</span>, and {' '}
-                <span className="tech-mention">PostgreSQL</span>. I'm especially interested in automation platforms, 
-                event-driven systems, and clean system design—the kind that holds up well as complexity and scale grow.
-              </p>
-            </AnimatedSection>
-            <AnimatedSection delay={600}>
-              <p>
-                I actively practice Competitive Programming and Data Structures & Algorithms, mostly because 
-                I enjoy the problem-solving mindset it builds.
-              </p>
-            </AnimatedSection>
-            <AnimatedSection delay={700}>
-              <p className="about-personal">
-                Outside of code, I like staying active. I did my schooling in <span className="text-highlight">Varanasi</span>, 
-                which is where my curiosity for building and breaking things first started. Whether it's software, 
-                fitness, or a new challenge, I'm always looking to learn and get better.
-              </p>
-            </AnimatedSection>
-            <AnimatedSection delay={800}>
-              <div className="about-interests">
-                <span className="interests-label">When I'm not coding:</span>
-                <div className="interests-list">
-                  {interests.map((interest, index) => (
-                    <span key={index} className="interest-tag">
-                      <span className="interest-icon">{interest.icon}</span>
-                      {interest.label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}>
+          <Typography variant="h1" sx={{ fontSize: 'clamp(2rem, 5.5vw, 4rem)', mb: 2, whiteSpace: 'nowrap' }}>
+            <Box component="span" sx={gradientText}>{text}</Box>
+            <Box component="span" className="cursor" sx={gradientText}>|</Box>
+          </Typography>
+        </motion.div>
 
-// Experience Section
-const Experience = () => {
-  const experiences = [
-    {
-      title: 'Software Engineer 2',
-      company: 'Micron',
-      location: 'Bangalore, India',
-      period: 'Jul 2024 - Present',
-      description: [
-        'Spearheading development of Summit, a unified automation platform using FastAPI, React.js and PostgreSQL for automated test workflows, execution, and real-time monitoring',
-        'Implemented ArtiFlow, an event-driven automation feature integrating JFrog Artifactory webhooks, resulting in 2× improvement in operational efficiency',
-        'Engineered scalable Test Case Management solution with async parallel processing, reducing load times by 50%',
-        'Achieved 30% reduction in API response times and scaled system to handle 2× traffic with 99.99% uptime'
-      ]
-    },
-    {
-      title: 'Software Engineering Intern',
-      company: 'Legistify (YC X22)',
-      location: 'Gurgaon, India',
-      period: 'Jan 2024 - Jun 2024',
-      description: [
-        'Built SmartCC, a Node.js micro-service using Gmail APIs and Google Cloud Pub/Sub for real-time email processing',
-        'Implemented rule-based triggers and event-driven e-signature reminders improving user experience',
-        'Integrated backend services to extract and persist email metadata in MongoDB with robust indexing and caching'
-      ]
-    },
-    {
-      title: 'Software Engineering Intern',
-      company: 'Société Générale',
-      location: 'Bangalore, India',
-      period: 'Jul 2023 - Aug 2023',
-      description: [
-        'Developed scalable backend analytics pipeline using C#, Git CLI, and structured data processing',
-        'Architected production-grade desktop application using .NET WPF and MVVM architecture with SQLite storage',
-        'Implemented real-time data visualization dashboards using LiveCharts2 for performance benchmarking across global teams'
-      ]
-    },
-    {
-      title: 'Machine Learning Intern',
-      company: 'Indian Army',
-      location: 'Remote',
-      period: 'Jun 2022 - Jul 2022',
-      description: [
-        'Trained YOLOv5-based object detection model for real-time drone detection, achieving 0.67 mAP on custom aerial surveillance dataset',
-        'Optimized model for edge deployment using TensorRT and TensorFlow Lite, achieving 120% improvement in inference speed on embedded devices',
-        'Designed data augmentation pipeline using Albumentations to enhance model robustness against adverse weather conditions'
-      ]
-    }
-  ];
-
-  return (
-    <section id="experience" className="section experience">
-      <div className="container">
-        <AnimatedSection>
-          <h2 className="section-title">
-            <span className="title-number">02.</span>
-            Experience
-          </h2>
-        </AnimatedSection>
-        <div className="timeline">
-          {experiences.map((exp, index) => (
-            <AnimatedSection key={index} className="timeline-item" delay={index * 200}>
-              <div className="timeline-marker">
-                <div className="marker-dot"></div>
-                <div className="marker-line"></div>
-              </div>
-              <div className="timeline-content">
-                <div className="experience-header">
-                  <div>
-                    <h3 className="experience-title">{exp.title}</h3>
-                    <p className="experience-company">
-                      {exp.company} <span className="separator">•</span> {exp.location}
-                    </p>
-                  </div>
-                  <span className="experience-period">{exp.period}</span>
-                </div>
-                <ul className="experience-list">
-                  {exp.description.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            </AnimatedSection>
+        <Stack spacing={2} sx={{ maxWidth: 700, mx: 'auto', mb: 5 }}>
+          {[
+            <>I'm a software engineer based in <Box component="span" sx={{ color: 'primary.light', fontWeight: 500 }}>Bangalore</Box>, currently focused on building scalable automation platforms and performance-critical backend systems.</>,
+            <>A <Box component="span" sx={{ color: 'primary.light', fontWeight: 500 }}>BITS Pilani</Box> graduate, I work across the stack from system design and APIs to databases and user-facing applications with an emphasis on efficiency, reliability, and clean architecture.</>,
+            <>I love working on problems where <Box component="span" sx={{ color: 'primary.light', fontWeight: 500 }}>scale</Box>, <Box component="span" sx={{ color: 'primary.light', fontWeight: 500 }}>correctness</Box>, and <Box component="span" sx={{ color: 'primary.light', fontWeight: 500 }}>developer experience</Box> truly matter.</>,
+          ].map((line, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 + i * 0.2 }}>
+              <Typography sx={{ fontSize: '1.1rem', color: 'text.secondary', lineHeight: 1.8 }}>{line}</Typography>
+            </motion.div>
           ))}
-        </div>
-      </div>
-    </section>
+        </Stack>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.8 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 5 }}>
+            <Button
+              variant="contained" size="large" endIcon={<ArrowRight size={20} />} href="#contact"
+              sx={{ background: gradient, boxShadow: '0 0 40px rgba(99, 102, 241, 0.3)', '&:hover': { boxShadow: '0 0 60px rgba(99, 102, 241, 0.5)', transform: 'translateY(-3px)' }, transition: 'all 0.3s' }}
+            >
+              Get in Touch
+            </Button>
+            <Button variant="outlined" size="large" href="#experience" sx={{ borderColor: '#1f2b4d', color: 'text.primary', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>
+              View My Work
+            </Button>
+          </Stack>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
+          <Stack direction="row" spacing={7} justifyContent="center">
+            {[{ n: '2+', l: 'Years Experience' }, { n: '15+', l: 'Technologies' }].map((s) => (
+              <Box key={s.l} textAlign="center">
+                <Typography sx={{ fontSize: '2.5rem', fontWeight: 800, ...gradientText }}>{s.n}</Typography>
+                <Typography variant="body2" color="text.secondary">{s.l}</Typography>
+              </Box>
+            ))}
+          </Stack>
+        </motion.div>
+      </motion.div>
+
+      <Box className="scroll-indicator">
+        <div className="mouse"><div className="wheel" /></div>
+        <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 2 }}>Scroll to explore</Typography>
+      </Box>
+    </Box>
   );
 };
 
-// Projects Section
-const Projects = () => {
-  const projects = [
-    {
-      title: 'BITS SU App',
-      description: 'Official mobile application of the Students\' Union, BITS Pilani, used daily by 5000+ students facilitating INR 60L+ in monthly transactions.',
-      tech: ['Flutter', 'Dart', 'Firebase', 'Google Maps API'],
-      highlights: [
-        'Built scalable production features: newsletters, merchandise signups, event registrations, cab bookings, food ordering',
-        'Implemented secure QR code-based authentication and Google Sign-In SSO',
-        'Integrated Firebase Cloud Messaging for real-time notifications',
-        'Google Maps API integration for live cab tracking and booking'
-      ],
-      link: 'https://play.google.com/store/apps/details?id=org.subitspilani.bits_su_app&hl=en_IN'
-    },
-    {
-      title: 'StudyDeck',
-      description: 'Official app of the Academic Department BITS Pilani, facilitating timetable creation and semester planning for students.',
-      tech: ['Flutter', 'Dart', 'Provider', 'sqflite'],
-      highlights: [
-        'Developed cross-platform Flutter app with interactive timetable visualization and automated conflict resolution',
-        'Architected using MVC pattern, integrated Provider for efficient state management',
-        'Implemented local response caching with sqflite, reducing server load and improving offline UX'
-      ],
-      link: 'https://studydeck.bits-sutechteam.org/'
-    },
-    {
-      title: 'PingHire',
-      description: 'High-performance candidate-job matching engine using weighted scoring algorithms for precise relevance ranking and recommendations.',
-      tech: ['Python', 'Git', 'JSON', 'Design Patterns'],
-      highlights: [
-        'Architected matching engine evaluating candidates across skills, experience, and education',
-        'Built scalable JSON-based data ingestion pipeline for high-throughput matching',
-        'Engineered pluggable notification adapter with O(1) integration of new channels'
-      ],
-      link: 'https://github.com/suyash-03/job-recommendation-backend'
-    }
-  ];
+// ---- About ----
+const About = () => (
+  <Box component="section" id="about" sx={{ py: { xs: 10, md: 15 }, bgcolor: '#1a1a2e' }}>
+    <Container maxWidth="lg">
+      <SectionTitle number="01.">About Me</SectionTitle>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '300px 1fr' }, gap: { xs: 5, md: 7 }, alignItems: 'start' }}>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+          <Box className="image-wrapper" sx={{ position: { md: 'sticky' }, top: { md: 100 }, mx: { xs: 'auto', md: 0 } }}>
+            <img src={profilePhoto} alt="Suyash Singh" className="profile-photo" />
+            <div className="image-border" />
+          </Box>
+        </motion.div>
 
-  return (
-    <section id="projects" className="section projects">
-      <div className="container">
-        <AnimatedSection>
-          <h2 className="section-title">
-            <span className="title-number">03.</span>
-            Projects
-          </h2>
-        </AnimatedSection>
-        <div className="projects-grid">
-          {projects.map((project, index) => (
-            <AnimatedSection key={index} className="project-card" delay={index * 200}>
-              <div className="project-header">
-                <div className="project-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                  </svg>
-                </div>
-                <div className="project-links">
-                  <a href={project.link} target="_blank" rel="noopener noreferrer" aria-label="View project">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                      <polyline points="15 3 21 3 21 9"/>
-                      <line x1="10" y1="14" x2="21" y2="3"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-              <h3 className="project-title">{project.title}</h3>
-              <p className="project-description">{project.description}</p>
-              <ul className="project-highlights">
-                {project.highlights.map((highlight, i) => (
-                  <li key={i}>{highlight}</li>
-                ))}
-              </ul>
-              <div className="project-tech">
-                {project.tech.map((tech, i) => (
-                  <span key={i} className="tech-tag">{tech}</span>
-                ))}
-              </div>
-            </AnimatedSection>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+          {[
+            <Typography sx={{ fontSize: '1.2rem', color: 'text.primary', fontWeight: 500 }}>
+              Hey! I'm <Box component="span" sx={gradientText}>Suyash Singh</Box>, a Software Engineer 2 at
+              <Box component="span" sx={{ color: 'primary.light' }}> Micron</Box>, currently based in Bangalore.
+            </Typography>,
+            <Typography color="text.secondary" sx={{ lineHeight: 1.8, fontSize: '1.05rem' }}>
+              I graduated from <Box component="span" sx={{ color: 'primary.light', fontWeight: 500 }}>BITS Pilani</Box> with a B.E. in
+              Electrical & Electronics Engineering, and I enjoy building software that's thoughtful, scalable, and a pleasure to work with.
+            </Typography>,
+            <Typography color="text.secondary" sx={{ lineHeight: 1.8, fontSize: '1.05rem' }}>
+              I spend most of my time designing backend systems and full-stack applications, working with{' '}
+              {['FastAPI', 'React.js', 'Node.js', 'Django', 'Flutter', 'Spring Boot', 'PostgreSQL'].map((t) => (
+                <Chip key={t} label={t} size="small" variant="outlined" sx={{ mx: 0.3, my: 0.3, borderColor: 'rgba(6, 182, 212, 0.3)', color: 'secondary.main', fontSize: '0.8rem', fontFamily: "'Fira Code', monospace" }} />
+              ))}
+              . I'm especially interested in automation platforms, event-driven systems, and clean system design.
+            </Typography>,
+            <Typography color="text.secondary" sx={{ lineHeight: 1.8, fontSize: '1.05rem' }}>
+              I actively practice Competitive Programming and Data Structures & Algorithms, mostly because I enjoy the problem-solving mindset it builds.
+            </Typography>,
+            <Typography color="text.secondary" sx={{ lineHeight: 1.8, fontSize: '1.05rem', pt: 1, borderTop: '1px solid #1f2b4d', mt: 1 }}>
+              Outside of code, I like staying active. I did my schooling in <Box component="span" sx={{ color: 'primary.light', fontWeight: 500 }}>Varanasi</Box>,
+              which is where my curiosity for building and breaking things first started.
+            </Typography>,
+          ].map((content, i) => (
+            <motion.div key={i} variants={fadeUp}><Box sx={{ mb: 2 }}>{content}</Box></motion.div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Skills Section
-const Skills = () => {
-  const skillCategories = [
-    {
-      title: 'Languages',
-      icon: '💻',
-      skills: [
-        { name: 'Python', level: 95 },
-        { name: 'JavaScript', level: 90 },
-        { name: 'Java', level: 85 },
-        { name: 'C/C++', level: 80 },
-        { name: 'Dart', level: 75 }
-      ]
-    },
-    {
-      title: 'Frameworks & Tech',
-      icon: '⚙️',
-      skills: [
-        { name: 'FastAPI', level: 95 },
-        { name: 'React.js', level: 90 },
-        { name: 'Node.js', level: 85 },
-        { name: 'Flutter', level: 80 },
-        { name: 'Django', level: 75 }
-      ]
-    },
-    {
-      title: 'Databases',
-      icon: '🗄️',
-      skills: [
-        { name: 'PostgreSQL', level: 90 },
-        { name: 'MongoDB', level: 85 },
-        { name: 'MySQL', level: 85 },
-        { name: 'DynamoDB', level: 75 },
-        { name: 'Redis', level: 80 }
-      ]
-    },
-    {
-      title: 'Tools & DevOps',
-      icon: '🛠️',
-      skills: [
-        { name: 'Git', level: 95 },
-        { name: 'Docker', level: 85 },
-        { name: 'AWS S3', level: 80 },
-        { name: 'Linux', level: 85 },
-        { name: 'CI/CD', level: 85 }
-      ]
-    }
-  ];
-
-  return (
-    <section id="skills" className="section skills">
-      <div className="container">
-        <AnimatedSection>
-          <h2 className="section-title">
-            <span className="title-number">04.</span>
-            Skills
-          </h2>
-        </AnimatedSection>
-        <div className="skills-grid">
-          {skillCategories.map((category, index) => (
-            <AnimatedSection key={index} className="skill-card" delay={index * 150}>
-              <div className="skill-card-header">
-                <span className="skill-icon">{category.icon}</span>
-                <h3>{category.title}</h3>
-              </div>
-              <div className="skill-list">
-                {category.skills.map((skill, i) => (
-                  <SkillBar key={i} skill={skill} delay={i * 100} />
+          <motion.div variants={fadeUp}>
+            <Paper sx={{ p: 2.5, bgcolor: '#16213e', border: '1px solid #1f2b4d', mt: 2 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>When I'm not coding:</Typography>
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                {interests.map((item) => (
+                  <Chip
+                    key={item.label} label={`${item.icon} ${item.label}`} variant="outlined"
+                    sx={{ borderColor: 'rgba(99, 102, 241, 0.2)', '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(99, 102, 241, 0.1)', transform: 'translateY(-2px)' }, transition: 'all 0.3s' }}
+                  />
                 ))}
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+              </Stack>
+            </Paper>
+          </motion.div>
+        </motion.div>
+      </Box>
+    </Container>
+  </Box>
+);
 
-// Skill Bar Component
-const SkillBar = ({ skill, delay }) => {
-  const [ref, isVisible] = useIntersectionObserver();
-  
-  return (
-    <div ref={ref} className="skill-item">
-      <div className="skill-header">
-        <span className="skill-name">{skill.name}</span>
-        <span className="skill-percentage">{skill.level}%</span>
-      </div>
-      <div className="skill-bar">
-        <div 
-          className="skill-progress"
-          style={{ 
-            width: isVisible ? `${skill.level}%` : '0%',
-            transitionDelay: `${delay}ms`
-          }}
-        ></div>
-      </div>
-    </div>
-  );
-};
-
-// Education Section
-const Education = () => {
-  const education = [
-    {
-      degree: 'B.E. Electrical and Electronics Engineering',
-      institution: 'Birla Institute of Technology and Science, Pilani',
-      period: '2020 - 2024',
-      description: 'Comprehensive coursework in Data Structures & Algorithms, DBMS, OOP, Operating Systems, Computer Programming, Discrete Mathematics, Graph Theory, and Calculus.',
-      highlight: 'BITS Pilani is the alma mater of founders of SanDisk, Hotmail, Swiggy, MPL, Groww, Zeta, BigBasket, BlueJeans, Postman, and several other unicorns.',
-      achievements: ['BITS Pilani', 'Associate Dean Recognition']
-    }
-  ];
-
-  return (
-    <section id="education" className="section education">
-      <div className="container">
-        <AnimatedSection>
-          <h2 className="section-title">
-            <span className="title-number">05.</span>
-            Education
-          </h2>
-        </AnimatedSection>
-        <div className="education-grid">
-          {education.map((edu, index) => (
-            <AnimatedSection key={index} className="education-card" delay={index * 200}>
-              <div className="education-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                  <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                </svg>
-              </div>
-              <div className="education-content">
-                <span className="education-period">{edu.period}</span>
-                <h3 className="education-degree">{edu.degree}</h3>
-                <p className="education-institution">{edu.institution}</p>
-                <p className="education-description">{edu.description}</p>
-                {edu.highlight && (
-                  <p className="education-highlight">{edu.highlight}</p>
+// ---- Experience ----
+const Experience = () => (
+  <Box component="section" id="experience" sx={{ py: { xs: 10, md: 15 } }}>
+    <Container maxWidth="lg">
+      <SectionTitle number="02.">Experience</SectionTitle>
+      <Box sx={{ maxWidth: 900, mx: 'auto' }}>
+        {experiences.map((exp, idx) => (
+          <motion.div key={idx} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}>
+            <Box sx={{ display: 'flex', gap: { xs: 2, md: 4 }, mb: idx < experiences.length - 1 ? 6 : 0, flexDirection: { xs: 'column', md: 'row' } }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'row', md: 'column' }, alignItems: 'center', flexShrink: 0 }}>
+                <Box sx={{ width: 16, height: 16, borderRadius: '50%', background: gradient, boxShadow: '0 0 20px rgba(99, 102, 241, 0.4)', flexShrink: 0 }} />
+                {idx < experiences.length - 1 && (
+                  <Box sx={{
+                    width: { xs: 'auto', md: 2 }, height: { xs: 2, md: 'auto' }, flexGrow: 1, mt: { md: 1 },
+                    background: { xs: 'linear-gradient(to right, #6366f1, transparent)', md: 'linear-gradient(to bottom, #6366f1, transparent)' },
+                  }} />
                 )}
-                <div className="education-achievements">
-                  {edu.achievements.map((achievement, i) => (
-                    <span key={i} className="achievement-tag">{achievement}</span>
-                  ))}
-                </div>
-              </div>
-            </AnimatedSection>
+              </Box>
+              <motion.div style={{ flexGrow: 1 }} whileHover={{ y: -4 }} transition={{ type: 'spring', stiffness: 300 }}>
+                <Card>
+                  <CardContent sx={{ p: { xs: 2.5, md: 3.5 } }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                      <Box>
+                        <Typography variant="h6" fontWeight={600}>{exp.title}</Typography>
+                        <Typography variant="body2" color="primary.light">{exp.company} &bull; {exp.location}</Typography>
+                      </Box>
+                      <Chip label={exp.period} size="small" sx={{ fontFamily: "'Fira Code', monospace", fontSize: '0.8rem', bgcolor: '#1f2b4d', color: 'text.secondary' }} />
+                    </Box>
+                    <Stack component="ul" sx={{ listStyle: 'none', p: 0, m: 0 }} spacing={1.5}>
+                      {exp.points.map((point, i) => (
+                        <Box component="li" key={i} sx={{
+                          pl: 3, position: 'relative', color: 'text.secondary', fontSize: '0.95rem', lineHeight: 1.7,
+                          '&::before': { content: '"\u25B9"', position: 'absolute', left: 0, color: 'primary.main' },
+                        }}>
+                          {point}
+                        </Box>
+                      ))}
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Box>
+          </motion.div>
+        ))}
+      </Box>
+    </Container>
+  </Box>
+);
+
+// ---- Projects ----
+const Projects = () => (
+  <Box component="section" id="projects" sx={{ py: { xs: 10, md: 15 } }}>
+    <Container maxWidth="lg">
+      <SectionTitle number="03.">Projects</SectionTitle>
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={stagger}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 4 }}>
+          {projects.map((project, idx) => (
+            <motion.div key={idx} variants={fadeUp} style={{ height: '100%' }}>
+              <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }} style={{ height: '100%' }}>
+                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <CardContent sx={{ p: 4, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2.5 }}>
+                      <FolderOpen size={40} color="#6366f1" />
+                      <IconButton component="a" href={project.link} target="_blank" rel="noopener noreferrer" sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
+                        <ExternalLink size={22} />
+                      </IconButton>
+                    </Box>
+                    <Typography variant="h6" sx={{ mb: 1.5, fontSize: '1.3rem' }}>{project.title}</Typography>
+                    <Typography color="text.secondary" sx={{ mb: 2.5, fontSize: '0.95rem', lineHeight: 1.6 }}>{project.description}</Typography>
+                    <Stack component="ul" sx={{ listStyle: 'none', p: 0, m: 0, mb: 3, flexGrow: 1 }} spacing={1}>
+                      {project.highlights.map((h, i) => (
+                        <Box component="li" key={i} sx={{
+                          pl: 2.5, position: 'relative', color: 'text.secondary', fontSize: '0.9rem', lineHeight: 1.5,
+                          '&::before': { content: '"\u25B9"', position: 'absolute', left: 0, color: 'primary.main' },
+                        }}>
+                          {h}
+                        </Box>
+                      ))}
+                    </Stack>
+                    <Stack direction="row" flexWrap="wrap" gap={1}>
+                      {project.tech.map((t) => (
+                        <Chip key={t} label={t} size="small" sx={{ bgcolor: 'rgba(99, 102, 241, 0.1)', color: 'primary.light', fontFamily: "'Fira Code', monospace", fontSize: '0.8rem' }} />
+                      ))}
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+        </Box>
+      </motion.div>
+    </Container>
+  </Box>
+);
 
-// Contact Section
-const Contact = () => {
-  return (
-    <section id="contact" className="section contact">
-      <div className="container">
-        <AnimatedSection>
-          <h2 className="section-title">
-            <span className="title-number">06.</span>
-            Get in Touch
-          </h2>
-        </AnimatedSection>
-        <AnimatedSection className="contact-content" delay={200}>
-          <p className="contact-description">
-            I'm always interested in hearing about new opportunities, challenging projects, 
-            or just connecting with fellow developers. Feel free to reach out!
-          </p>
-          <div className="contact-links">
-            <a href="mailto:suyash.singh9450@gmail.com" className="contact-link">
-              <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-              </div>
-              <div className="contact-info">
-                <span className="contact-label">Email</span>
-                <span className="contact-value">suyash.singh9450@gmail.com</span>
-              </div>
-            </a>
-            <a href="https://www.linkedin.com/in/suyash-singh-bb9477203/" target="_blank" rel="noopener noreferrer" className="contact-link">
-              <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-                  <rect x="2" y="9" width="4" height="12"/>
-                  <circle cx="4" cy="4" r="2"/>
-                </svg>
-              </div>
-              <div className="contact-info">
-                <span className="contact-label">LinkedIn</span>
-                <span className="contact-value">Connect on LinkedIn</span>
-              </div>
-            </a>
-            <a href="https://github.com/suyash-03" target="_blank" rel="noopener noreferrer" className="contact-link">
-              <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-                </svg>
-              </div>
-              <div className="contact-info">
-                <span className="contact-label">GitHub</span>
-                <span className="contact-value">github.com/suyash-03</span>
-              </div>
-            </a>
-            <a href="tel:+917007038266" className="contact-link">
-              <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-              </div>
-              <div className="contact-info">
-                <span className="contact-label">Phone</span>
-                <span className="contact-value">+91 7007038266</span>
-              </div>
-            </a>
-            <a href="https://drive.google.com/file/d/1BfFVKido3JBLXqRoP-2U2lB2pFr0PoN2/view?usp=share_link" target="_blank" rel="noopener noreferrer" className="contact-link resume-link">
-              <div className="contact-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="16" y1="13" x2="8" y2="13"/>
-                  <line x1="16" y1="17" x2="8" y2="17"/>
-                  <polyline points="10 9 9 9 8 9"/>
-                </svg>
-              </div>
-              <div className="contact-info">
-                <span className="contact-label">Resume</span>
-                <span className="contact-value">View My Resume</span>
-              </div>
-            </a>
-          </div>
-          <div className="contact-buttons">
-            <a href="mailto:suyash.singh9450@gmail.com" className="btn btn-primary btn-large">
-              <span>Say Hello</span>
-              <svg viewBox="0 0 24 24" className="btn-icon">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
-            <a href="https://drive.google.com/file/d/1BfFVKido3JBLXqRoP-2U2lB2pFr0PoN2/view?usp=share_link" target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-large">
-              <span>Download Resume</span>
-              <svg viewBox="0 0 24 24" className="btn-icon">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-              </svg>
-            </a>
-          </div>
-        </AnimatedSection>
-      </div>
-    </section>
-  );
-};
+// ---- Skills ----
+const Skills = () => (
+  <Box component="section" id="skills" sx={{ py: { xs: 10, md: 15 }, bgcolor: '#1a1a2e' }}>
+    <Container maxWidth="lg">
+      <SectionTitle number="04.">Skills</SectionTitle>
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={stagger}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 4 }}>
+          {skillCategories.map((cat, idx) => {
+            const Icon = cat.icon;
+            return (
+              <motion.div key={idx} variants={fadeUp}>
+                <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                  <Card>
+                    <CardContent sx={{ p: 3.5 }}>
+                      <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 3 }}>
+                        <Icon size={28} color="#6366f1" />
+                        <Typography variant="h6" fontSize="1.1rem">{cat.title}</Typography>
+                      </Stack>
+                      <Stack spacing={2.5}>
+                        {cat.skills.map((skill, i) => (
+                          <SkillBar key={skill.name} skill={skill} delay={i} />
+                        ))}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </motion.div>
+            );
+          })}
+        </Box>
+      </motion.div>
+    </Container>
+  </Box>
+);
 
-// Footer
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="container">
-        <p>Designed & Built with <span className="heart">❤</span> by Suyash Singh</p>
-        <p className="copyright">© {new Date().getFullYear()} All rights reserved.</p>
-      </div>
-    </footer>
-  );
-};
+// ---- Education ----
+const Education = () => (
+  <Box component="section" id="education" sx={{ py: { xs: 10, md: 15 } }}>
+    <Container maxWidth="lg">
+      <SectionTitle number="05.">Education</SectionTitle>
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
+        <motion.div whileHover={{ y: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+          <Card sx={{ maxWidth: 800 }}>
+            <CardContent sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'center', md: 'flex-start' }, p: { xs: 3, md: 5 } }}>
+              <Box sx={{ width: 60, height: 60, borderRadius: 3, bgcolor: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <GraduationCap size={30} color="#6366f1" />
+              </Box>
+              <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                <Typography variant="body2" sx={{ color: 'primary.light', fontFamily: "'Fira Code', monospace", mb: 1 }}>2020 - 2024</Typography>
+                <Typography variant="h6" sx={{ mb: 0.5 }}>B.E. Electrical and Electronics Engineering</Typography>
+                <Typography color="text.secondary" sx={{ mb: 1.5 }}>Birla Institute of Technology and Science, Pilani</Typography>
+                <Typography color="text.secondary" sx={{ fontSize: '0.95rem', mb: 2 }}>
+                  Comprehensive coursework in Data Structures & Algorithms, DBMS, OOP, Operating Systems, Computer Programming, Discrete Mathematics, Graph Theory, and Calculus.
+                </Typography>
+                <Paper sx={{ p: 2, mb: 2, bgcolor: 'transparent', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.05))', borderLeft: '3px solid #6366f1', borderRadius: '0 8px 8px 0', boxShadow: 'none' }}>
+                  <Typography variant="body2" sx={{ fontStyle: 'italic', lineHeight: 1.6 }}>
+                    BITS Pilani is the alma mater of founders of SanDisk, Hotmail, Swiggy, MPL, Groww, Zeta, BigBasket, BlueJeans, Postman, and several other unicorns.
+                  </Typography>
+                </Paper>
+                <Stack direction="row" spacing={1} justifyContent={{ xs: 'center', md: 'flex-start' }}>
+                  {['BITS Pilani', 'Associate Dean Recognition'].map((a) => (
+                    <Chip key={a} label={a} size="small" sx={{ bgcolor: 'rgba(99, 102, 241, 0.1)', color: 'primary.light', fontWeight: 500 }} />
+                  ))}
+                </Stack>
+              </Box>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
+    </Container>
+  </Box>
+);
 
-// Main App Component
+// ---- Contact ----
+const Contact = () => (
+  <Box component="section" id="contact" sx={{ py: { xs: 10, md: 15 }, bgcolor: '#1a1a2e' }}>
+    <Container maxWidth="lg">
+      <SectionTitle number="06.">Get in Touch</SectionTitle>
+      <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+        <Box sx={{ maxWidth: 700, mx: 'auto', textAlign: 'center' }}>
+          <motion.div variants={fadeUp}>
+            <Typography color="text.secondary" sx={{ fontSize: '1.1rem', mb: 6 }}>
+              I'm always interested in hearing about new opportunities, challenging projects, or just connecting with fellow developers. Feel free to reach out!
+            </Typography>
+          </motion.div>
+
+          <Stack spacing={2.5} sx={{ mb: 5 }}>
+            {contactLinks.map((c, idx) => {
+              const Icon = c.icon;
+              return (
+                <motion.div key={idx} variants={fadeUp}>
+                  <motion.div whileHover={{ x: 10 }} transition={{ type: 'spring', stiffness: 300 }}>
+                    <Paper
+                      component="a" href={c.href} target={c.external ? '_blank' : undefined} rel={c.external ? 'noopener noreferrer' : undefined}
+                      sx={{
+                        display: 'flex', alignItems: 'center', gap: 2.5, p: 3, textDecoration: 'none', color: 'inherit', cursor: 'pointer',
+                        border: '1px solid', borderColor: c.highlight ? 'primary.main' : '#1f2b4d',
+                        bgcolor: c.highlight ? 'rgba(99, 102, 241, 0.05)' : 'background.paper',
+                        transition: 'all 0.3s',
+                        '&:hover': { borderColor: 'primary.main', boxShadow: '0 0 30px rgba(99, 102, 241, 0.2)' },
+                      }}
+                    >
+                      <Box sx={{ width: 50, height: 50, borderRadius: 3, bgcolor: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Icon size={24} color="#6366f1" />
+                      </Box>
+                      <Box textAlign="left">
+                        <Typography variant="body2" color="text.secondary">{c.label}</Typography>
+                        <Typography fontWeight={600}>{c.value}</Typography>
+                      </Box>
+                    </Paper>
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </Stack>
+
+          <motion.div variants={fadeUp}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+              <Button
+                variant="contained" size="large" endIcon={<ArrowRight size={20} />}
+                href="mailto:suyash.singh9450@gmail.com"
+                sx={{ background: gradient, px: 5, py: 1.8, fontSize: '1.1rem', boxShadow: '0 0 40px rgba(99, 102, 241, 0.3)', '&:hover': { boxShadow: '0 0 60px rgba(99, 102, 241, 0.5)', transform: 'translateY(-3px)' }, transition: 'all 0.3s' }}
+              >
+                Say Hello
+              </Button>
+              <Button
+                variant="outlined" size="large" endIcon={<Download size={20} />}
+                href="https://drive.google.com/file/d/1BfFVKido3JBLXqRoP-2U2lB2pFr0PoN2/view?usp=share_link"
+                target="_blank"
+                sx={{ px: 5, py: 1.8, fontSize: '1.1rem', borderColor: '#1f2b4d', color: 'text.primary', '&:hover': { borderColor: 'primary.main' } }}
+              >
+                Download Resume
+              </Button>
+            </Stack>
+          </motion.div>
+        </Box>
+      </motion.div>
+    </Container>
+  </Box>
+);
+
+// ---- Footer ----
+const Footer = () => (
+  <Box component="footer" sx={{ py: 5, textAlign: 'center', borderTop: '1px solid #1f2b4d' }}>
+    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+      Designed & Built with <Box component="span" sx={{ color: '#ef4444' }}>{'\u2764'}</Box> by Suyash Singh
+    </Typography>
+    <Typography variant="caption" sx={{ color: '#64748b' }}>
+      {'\u00A9'} {new Date().getFullYear()} All rights reserved.
+    </Typography>
+  </Box>
+);
+
+// ---- App ----
 function App() {
+  const { spotlightBg, handleMouseMove } = useCursorGlow();
+
   return (
-    <div className="App">
-      <Navigation />
-      <Hero />
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Education />
-      <Contact />
-      <Footer />
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box onMouseMove={handleMouseMove} sx={{ position: 'relative' }}>
+        <motion.div
+          style={{ background: spotlightBg, position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+        />
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <Navigation />
+          <Hero />
+          <About />
+          <Experience />
+          <Projects />
+          <Skills />
+          <Education />
+          <Contact />
+          <Footer />
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 }
 
