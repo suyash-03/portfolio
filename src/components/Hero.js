@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Container, Box, Typography, Button, Stack } from '@mui/material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { TerminalLogs } from '../data/portfolioData';
 
@@ -160,16 +160,29 @@ const SummitTerminal = () => {
 };
 
 const Hero = () => {
+  const heroRef = useRef(null);
+  
+  // Track scroll progress of the hero section relative to viewport top
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start']
+  });
+
+  // Scroll reactions: slide up and fade out
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  // Terminal shrinks, slides up faster (creates depth) and fades out
+  const terminalY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const terminalScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.9]);
+  const terminalOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
   return (
     <Box
+      ref={heroRef}
       id="home"
       sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative', overflow: 'hidden', pt: 16, pb: 10 }}
     >
-      <Box className="bg-canvas">
-        <div className="ambient-spotlight spot-1" />
-        <div className="ambient-spotlight spot-2" />
-        <div className="dot-grid" />
-      </Box>
 
       <Container maxWidth="lg">
         <Box
@@ -180,65 +193,58 @@ const Hero = () => {
             alignItems: 'center'
           }}
         >
-          <Box>
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <motion.div style={{ y: textY, opacity: textOpacity }}>
+            <Box>
               <div className="status-badge" style={{ marginBottom: 24 }}>
                 <span className="status-dot" />
                 <span>Software Engineer 2 @ Micron</span>
               </div>
-            </motion.div>
+            </Box>
 
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
-              <Typography variant="h1" sx={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', mb: 3, lineHeight: 1.1, fontWeight: 900 }}>
-                I build scalable <Box component="span" sx={gradientText}>automation platforms</Box> & distributed backends.
-              </Typography>
-            </motion.div>
+            <Typography variant="h1" sx={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', mb: 3, lineHeight: 1.1, fontWeight: 900 }}>
+              I build scalable <Box component="span" sx={gradientText}>automation platforms</Box> & distributed backends.
+            </Typography>
 
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}>
-              <Typography sx={{ fontSize: '1.15rem', color: 'text.secondary', mb: 5, lineHeight: 1.7, maxWidth: 540 }}>
-                Hi, I'm <Box component="span" sx={{ color: 'text.primary', fontWeight: 600 }}>Suyash Singh</Box>. I'm a Software Engineer specializing in distributed orchestration platforms, event-driven automation, and high-throughput async pipelines. A BITS Pilani alumnus, I build resilient, latency-optimized systems that scale under heavy workloads.
-              </Typography>
-            </motion.div>
+            <Typography sx={{ fontSize: '1.15rem', color: 'text.secondary', mb: 5, lineHeight: 1.7, maxWidth: 540 }}>
+              Hi, I'm <Box component="span" sx={{ color: 'text.primary', fontWeight: 600 }}>Suyash Singh</Box>. I'm a Software Engineer specializing in distributed orchestration platforms, event-driven automation, and high-throughput async pipelines. A BITS Pilani alumnus, I build resilient, latency-optimized systems that scale under heavy workloads.
+            </Typography>
 
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5}>
-                <Button
-                  variant="contained" size="large" endIcon={<ArrowRight size={20} />} href="#contact"
-                  sx={{
-                    background: gradient,
-                    boxShadow: '0 4px 20px rgba(99, 102, 241, 0.2)',
-                    '&:hover': {
-                      boxShadow: '0 6px 30px rgba(99, 102, 241, 0.4)',
-                      transform: 'translateY(-2px)'
-                    },
-                    transition: 'all 0.3s'
-                  }}
-                >
-                  Get in Touch
-                </Button>
-                <Button
-                  variant="outlined" size="large" href="#experience"
-                  sx={{
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    color: 'text.primary',
-                    '&:hover': {
-                      borderColor: 'primary.light',
-                      bgcolor: 'rgba(255,255,255,0.02)',
-                      transform: 'translateY(-2px)'
-                    },
-                    transition: 'all 0.3s'
-                  }}
-                >
-                  View Experience
-                </Button>
-              </Stack>
-            </motion.div>
-          </Box>
-          <Box>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }}>
-              <SummitTerminal />
-            </motion.div>
-          </Box>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2.5}>
+              <Button
+                variant="contained" size="large" endIcon={<ArrowRight size={20} />} href="#contact"
+                sx={{
+                  background: gradient,
+                  boxShadow: '0 4px 20px rgba(99, 102, 241, 0.2)',
+                  '&:hover': {
+                    boxShadow: '0 6px 30px rgba(99, 102, 241, 0.4)',
+                    transform: 'translateY(-2px)'
+                  },
+                  transition: 'all 0.3s'
+                }}
+              >
+                Get in Touch
+              </Button>
+              <Button
+                variant="outlined" size="large" href="#experience"
+                sx={{
+                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'text.primary',
+                  '&:hover': {
+                    borderColor: 'primary.light',
+                    bgcolor: 'rgba(255,255,255,0.02)',
+                    transform: 'translateY(-2px)'
+                  },
+                  transition: 'all 0.3s'
+                }}
+              >
+                View Experience
+              </Button>
+            </Stack>
+          </motion.div>
+          
+          <motion.div style={{ y: terminalY, scale: terminalScale, opacity: terminalOpacity }}>
+            <SummitTerminal />
+          </motion.div>
         </Box>
       </Container>
     </Box>

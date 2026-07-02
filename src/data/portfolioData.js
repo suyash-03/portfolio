@@ -1,6 +1,6 @@
 import { Code, Cpu, Database, Wrench } from 'lucide-react';
 
-export const navLinks = ['About', 'Experience', 'Projects', 'Skills', 'Education', 'Contact'];
+export const navLinks = ['About', 'Summit', 'Experience', 'Projects', 'Skills', 'Education', 'Contact'];
 
 export const experiences = [
   {

@@ -1,11 +1,25 @@
+import { useRef } from 'react';
 import { Box, Container, Card, CardContent, Typography, Stack } from '@mui/material';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Trophy, Award, GraduationCap } from 'lucide-react';
 import SectionTitle from './SectionTitle';
 import profilePhoto from '../profile.png';
 
 const About = () => {
+  const containerRef = useRef(null);
+  
+  // Track scroll progress of this container relative to the viewport
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start']
+  });
+
+  // Asymmetrical parallax float transitions
+  const leftY = useTransform(scrollYProgress, [0, 1], [-30, 30]);
+  const rightY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+
   return (
-    <Box component="section" id="about" sx={{ py: { xs: 8, md: 12 } }}>
+    <Box ref={containerRef} component="section" id="about" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <SectionTitle number="01.">About Me</SectionTitle>
         <Box
@@ -16,8 +30,8 @@ const About = () => {
             alignItems: 'start'
           }}
         >
-          {/* Photo Column */}
-          <Box sx={{ width: '100%', maxWidth: 280, mx: 'auto' }}>
+          {/* Photo Column (Left Parallax Shift) */}
+          <motion.div style={{ y: leftY, width: '100%', maxWidth: 280, marginLeft: 'auto', marginRight: 'auto' }}>
             <Box
               sx={{
                 borderRadius: 4,
@@ -33,10 +47,10 @@ const About = () => {
                 style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
               />
             </Box>
-          </Box>
+          </motion.div>
 
-          {/* Content Column */}
-          <Box>
+          {/* Content Column (Right Parallax Shift) */}
+          <motion.div style={{ y: rightY }}>
             <Card className="bento-card">
               <CardContent sx={{ p: { xs: 3.5, md: 4.5 } }}>
                 <Typography variant="h5" sx={{ mb: 2, fontWeight: 700 }}>Suyash Singh</Typography>
@@ -95,7 +109,7 @@ const About = () => {
                 </CardContent>
               </Card>
             </Box>
-          </Box>
+          </motion.div>
         </Box>
       </Container>
     </Box>

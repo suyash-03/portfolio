@@ -1,6 +1,8 @@
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
+import SummitSimulator from './components/SummitSimulator';
 import About from './components/About';
 import Experience from './components/Experience';
 import Projects from './components/Projects';
@@ -8,6 +10,8 @@ import Skills from './components/Skills';
 import Education from './components/Education';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import ScrollReveal from './components/ScrollReveal';
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
 // ---- Theme Configuration ----
@@ -48,19 +52,67 @@ const theme = createTheme({
 });
 
 function App() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  // Global background spotlights shift as user scrolls
+  const spot1Y = useTransform(scrollYProgress, [0, 1], [0, 400]);
+  const spot2Y = useTransform(scrollYProgress, [0, 1], [0, -400]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div className="noise-overlay" />
+      
+      {/* Global Background Spotlights */}
+      <Box className="bg-canvas">
+        <motion.div style={{ y: spot1Y }} className="ambient-spotlight spot-1" />
+        <motion.div style={{ y: spot2Y }} className="ambient-spotlight spot-2" />
+        <div className="dot-grid" />
+      </Box>
+
+      {/* Scroll Progress Bar at Viewport Top */}
+      <motion.div className="scroll-progress-bar" style={{ scaleX }} />
+      
       <Navigation />
       <Hero />
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Education />
-      <Contact />
+
+      <ScrollReveal>
+        <SummitSimulator />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <About />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <Experience />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <Projects />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <Skills />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <Education />
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <Contact />
+      </ScrollReveal>
+
       <Footer />
+
+      {/* Floating Scroll Indicator Elements */}
+      <ScrollToTop />
     </ThemeProvider>
   );
 }
