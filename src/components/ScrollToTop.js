@@ -44,20 +44,18 @@ const ScrollToTop = () => {
           <IconButton
             onClick={scrollToTop}
             sx={{
-              bgcolor: 'rgba(99, 102, 241, 0.1)',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
-              color: 'primary.light',
-              backdropFilter: 'blur(8px)',
-              width: 50,
-              height: 50,
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              bgcolor: 'rgba(199, 120, 221, 0.1)',
+              border: '1px solid #C778DD',
+              borderRadius: '4px',
+              color: '#C778DD',
+              width: 44,
+              height: 44,
+              transition: 'all 0.3s ease',
               '&:hover': {
-                bgcolor: 'rgba(99, 102, 241, 0.25)',
-                borderColor: '#6366f1',
-                color: '#ffffff',
-                transform: 'translateY(-4px)',
-                boxShadow: '0 12px 40px rgba(99, 102, 241, 0.4)'
+                bgcolor: 'rgba(199, 120, 221, 0.2)',
+                borderColor: '#C778DD',
+                color: '#FFFFFF',
+                transform: 'translateY(-3px)'
               }
             }}
           >

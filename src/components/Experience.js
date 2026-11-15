@@ -10,50 +10,68 @@ const Experience = () => {
   return (
     <Box component="section" id="experience" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
-        <SectionTitle number="02.">Work History</SectionTitle>
+        <SectionTitle>work-history</SectionTitle>
         <Card className="bento-card">
           <CardContent sx={{ p: 0 }}>
             {/* Horizontal Tabs Header */}
             <Box
               sx={{
-                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                borderBottom: '1px solid #ABB2BF',
                 display: 'flex',
                 overflowX: 'auto',
                 p: 2,
-                gap: 1.5,
-                bgcolor: 'rgba(255, 255, 255, 0.01)'
+                gap: 1,
+                bgcolor: 'rgba(0,0,0,0.1)',
+                alignItems: 'center',
+                flexWrap: { xs: 'nowrap', md: 'wrap' },
+                WebkitOverflowScrolling: 'touch',
               }}
             >
-              {experiences.map((exp, idx) => (
-                <Button
-                  key={exp.company}
-                  onClick={() => setActiveTab(idx)}
-                  sx={{
-                    flexShrink: 0,
-                    textTransform: 'none',
-                    borderRadius: '10px',
-                    py: 1.2,
-                    px: 3.5,
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: activeTab === idx ? '#fff' : 'text.secondary',
-                    bgcolor: activeTab === idx ? 'rgba(99, 102, 241, 0.08)' : 'transparent',
-                    border: '1px solid',
-                    borderColor: activeTab === idx ? 'rgba(99, 102, 241, 0.3)' : 'transparent',
-                    '&:hover': {
-                      bgcolor: 'rgba(255, 255, 255, 0.02)',
-                      color: 'text.primary'
-                    },
-                    transition: 'all 0.3s'
-                  }}
-                >
-                  {exp.company}
-                </Button>
-              ))}
+              {experiences.map((exp, idx) => {
+                const isActive = activeTab === idx;
+                // Show promoted badge between SE1 and SE2 (SE2 is index 0, SE1 is index 1)
+                // We render the badge AFTER the SE1 tab (idx=1) since SE2 comes first in array
+                const showPromotedBadge = exp.promoted === true && idx === 0;
+
+                return (
+                  <Box key={`${exp.company}-${exp.role}`} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Button
+                      onClick={() => setActiveTab(idx)}
+                      sx={{
+                        flexShrink: 0,
+                        textTransform: 'none',
+                        borderRadius: '4px',
+                        py: 1,
+                        px: 2.5,
+                        fontSize: '0.85rem',
+                        fontWeight: 500,
+                        fontFamily: "'Fira Code', monospace",
+                        color: isActive ? '#C778DD' : 'text.secondary',
+                        bgcolor: isActive ? 'rgba(199, 120, 221, 0.08)' : 'transparent',
+                        border: '1px solid',
+                        borderColor: isActive ? '#C778DD' : 'transparent',
+                        '&:hover': {
+                          bgcolor: 'rgba(199, 120, 221, 0.05)',
+                          color: '#C778DD'
+                        },
+                        transition: 'all 0.3s'
+                      }}
+                    >
+                      {exp.company === 'Micron'
+                        ? `Micron (${exp.role === 'Software Engineer 2' ? 'SE 2' : 'SE 1'})`
+                        : exp.company}
+                    </Button>
+                    {/* Promoted badge appears next to SE2 */}
+                    {showPromotedBadge && (
+                      <span className="promoted-badge">↑ Promoted</span>
+                    )}
+                  </Box>
+                );
+              })}
             </Box>
 
             {/* Detail Panel */}
-            <Box sx={{ p: { xs: 4, md: 5 }, minHeight: 320 }}>
+            <Box sx={{ p: { xs: 3, md: 5 }, minHeight: 320 }}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
@@ -62,12 +80,21 @@ const Experience = () => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
+                  {/* Promotion Highlight Banner */}
+                  {experiences[activeTab].promoted && (
+                    <Box sx={{ mb: 3, p: 1.5, px: 2, bgcolor: 'rgba(199, 120, 221, 0.08)', border: '1px solid #C778DD', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="caption" sx={{ color: '#C778DD', fontFamily: "'Fira Code', monospace", fontWeight: 600, fontSize: '0.8rem' }}>
+                        ★ PROMOTION: Promoted from Software Engineer 1 to Software Engineer 2 at Micron
+                      </Typography>
+                    </Box>
+                  )}
+
                   <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} sx={{ mb: 3, gap: 1.5 }}>
                     <Box>
-                      <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                      <Typography variant="h5" sx={{ fontWeight: 600, fontFamily: "'Fira Code', monospace" }}>
                         {experiences[activeTab].role}
                       </Typography>
-                      <Typography variant="subtitle1" color="primary.light" sx={{ fontWeight: 500 }}>
+                      <Typography variant="subtitle1" sx={{ color: '#C778DD', fontWeight: 500, fontFamily: "'Fira Code', monospace" }}>
                         {experiences[activeTab].company} — {experiences[activeTab].location}
                       </Typography>
                     </Box>
@@ -75,11 +102,11 @@ const Experience = () => {
                       label={experiences[activeTab].period}
                       size="small"
                       sx={{
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Fira Code', monospace",
                         fontSize: '0.8rem',
-                        bgcolor: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.05)',
-                        color: 'text.secondary'
+                        bgcolor: 'rgba(199, 120, 221, 0.06)',
+                        border: '1px solid rgba(199, 120, 221, 0.3)',
+                        color: '#C778DD'
                       }}
                     />
                   </Stack>
@@ -93,13 +120,14 @@ const Experience = () => {
                           pl: 3,
                           position: 'relative',
                           color: 'text.secondary',
-                          fontSize: '0.95rem',
+                          fontSize: '0.93rem',
                           lineHeight: 1.7,
+                          fontFamily: "'Fira Code', monospace",
                           '&::before': {
                             content: '"→"',
                             position: 'absolute',
                             left: 0,
-                            color: 'primary.light'
+                            color: '#C778DD'
                           }
                         }}
                       >
@@ -108,8 +136,8 @@ const Experience = () => {
                     ))}
                   </Stack>
 
-                  <Box sx={{ borderTop: '1px solid rgba(255,255,255,0.05)', pt: 3.5 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 1.5 }}>
+                  <Box sx={{ borderTop: '1px solid rgba(171, 178, 191, 0.3)', pt: 3 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 1.5, fontFamily: "'Fira Code', monospace" }}>
                       Technologies Used
                     </Typography>
                     <Stack direction="row" flexWrap="wrap" gap={1}>
@@ -118,13 +146,7 @@ const Experience = () => {
                           key={t}
                           label={t}
                           size="small"
-                          sx={{
-                            bgcolor: 'rgba(99, 102, 241, 0.05)',
-                            border: '1px solid rgba(99, 102, 241, 0.1)',
-                            color: 'primary.light',
-                            fontFamily: "'JetBrains Mono', monospace",
-                            fontSize: '0.75rem'
-                          }}
+                          className="skill-tag"
                         />
                       ))}
                     </Stack>

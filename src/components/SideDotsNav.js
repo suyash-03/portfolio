@@ -99,14 +99,14 @@ const SideDotsNav = () => {
                 <motion.div
                   animate={{
                     scale: isActive ? 1.4 : 1,
-                    backgroundColor: isActive ? '#06b6d4' : 'rgba(255, 255, 255, 0.2)'
+                    backgroundColor: isActive ? '#C778DD' : 'rgba(255, 255, 255, 0.2)'
                   }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   style={{
                     width: '8px',
                     height: '8px',
                     borderRadius: '50%',
-                    boxShadow: isActive ? '0 0 10px #06b6d4' : 'none'
+                    boxShadow: isActive ? '0 0 10px #C778DD' : 'none'
                   }}
                 />
               </Box>

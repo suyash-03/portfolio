@@ -4,9 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, CheckCircle, AlertTriangle, Sliders, Activity, Brain } from 'lucide-react';
 import SectionTitle from './SectionTitle';
 
-const gradient = 'linear-gradient(135deg, #06b6d4 0%, #6366f1 100%)';
-const accentGradient = 'linear-gradient(135deg, #f43f5e 0%, #a855f7 100%)';
-
 const SummitSimulator = () => {
   // Config states
   const [hardware, setHardware] = useState('SSD Gen5 NVMe');
@@ -160,8 +157,8 @@ const SummitSimulator = () => {
   return (
     <Box component="section" id="summit" sx={{ py: { xs: 8, md: 12 }, position: 'relative' }}>
       <Container maxWidth="lg">
-        <SectionTitle number="02.">Summit Sandbox</SectionTitle>
-        <Typography color="text.secondary" sx={{ fontSize: '1.1rem', mb: 6, textAlign: 'center', maxWidth: 750, mx: 'auto', lineHeight: 1.7 }}>
+        <SectionTitle>summit-sandbox</SectionTitle>
+        <Typography color="text.secondary" sx={{ fontSize: '0.95rem', mb: 6, textAlign: 'center', maxWidth: 750, mx: 'auto', lineHeight: 1.8, fontFamily: "'Fira Code', monospace" }}>
           At Micron, my team scales <strong>Summit</strong>, a distributed hardware-in-the-loop test orchestration platform. Try this simulation to configure a test run, execute firmware test suites, and trigger the AI-driven Root Cause Analysis (RCA) engine on simulated target faults.
         </Typography>
 
@@ -175,16 +172,17 @@ const SummitSimulator = () => {
         >
           {/* Left panel: Control center configuration */}
           <Card className="bento-card summit-sim-card" sx={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="dot-corner top-right" />
             <CardContent sx={{ p: 4, flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <Box>
                 <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
-                  <Sliders size={20} color="#06b6d4" />
-                  <Typography variant="h6" sx={{ fontWeight: 700 }}>Orchestrator Config</Typography>
+                  <Sliders size={20} color="#C778DD" />
+                  <Typography variant="h6" sx={{ fontWeight: 600, fontFamily: "'Fira Code', monospace", color: '#FFFFFF' }}>Orchestrator Config</Typography>
                 </Stack>
 
                 <Stack spacing={3}>
                   <Box>
-                    <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'primary.light', display: 'block', mb: 1 }}>
+                    <Typography variant="caption" sx={{ fontFamily: "'Fira Code', monospace", color: '#C778DD', display: 'block', mb: 1 }}>
                       TARGET HARDWARE PLATFORM
                     </Typography>
                     <select
@@ -200,7 +198,7 @@ const SummitSimulator = () => {
                   </Box>
 
                   <Box>
-                    <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'primary.light', display: 'block', mb: 1 }}>
+                    <Typography variant="caption" sx={{ fontFamily: "'Fira Code', monospace", color: '#C778DD', display: 'block', mb: 1 }}>
                       FIRMWARE REPOSITORY BRANCH
                     </Typography>
                     <select
@@ -217,7 +215,7 @@ const SummitSimulator = () => {
                   </Box>
 
                   <Box>
-                    <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'primary.light', display: 'block', mb: 1 }}>
+                    <Typography variant="caption" sx={{ fontFamily: "'Fira Code', monospace", color: '#C778DD', display: 'block', mb: 1 }}>
                       TEST SUITE WORKFLOW
                     </Typography>
                     <select
@@ -243,7 +241,7 @@ const SummitSimulator = () => {
                         />
                       }
                       label={
-                        <Typography variant="body2" sx={{ fontWeight: 500, color: injectError ? '#f43f5e' : 'text.secondary' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, color: injectError ? '#f43f5e' : 'text.secondary', fontFamily: "'Fira Code', monospace", fontSize: '0.85rem' }}>
                           Inject hardware register fault (Simulate failure)
                         </Typography>
                       }
@@ -254,20 +252,21 @@ const SummitSimulator = () => {
 
               <Box sx={{ mt: 4 }}>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   fullWidth
                   onClick={runSimulation}
                   disabled={simStatus === 'running'}
                   startIcon={simStatus === 'running' ? <CircularProgress size={16} color="inherit" /> : <Play size={16} />}
                   sx={{
-                    background: simStatus === 'running' ? 'rgba(255,255,255,0.08)' : gradient,
-                    boxShadow: '0 4px 15px rgba(6, 182, 212, 0.25)',
+                    borderColor: '#C778DD',
+                    color: '#C778DD',
                     py: 1.5,
-                    fontFamily: 'monospace',
-                    fontSize: '0.9rem',
+                    fontFamily: "'Fira Code', monospace",
+                    fontSize: '0.85rem',
                     '&:hover': {
-                      transform: 'translateY(-1px)',
-                      boxShadow: '0 6px 20px rgba(6, 182, 212, 0.4)'
+                      borderColor: '#C778DD',
+                      bgcolor: 'rgba(199, 120, 221, 0.1)',
+                      transform: 'translateY(-1px)'
                     }
                   }}
                 >
@@ -319,28 +318,28 @@ const SummitSimulator = () => {
               </Box>
 
               {/* Fluctuating metrics bar */}
-              <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.05)', bgcolor: 'rgba(0,0,0,0.3)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+              <Box sx={{ p: 2, borderTop: '1px solid rgba(171, 178, 191, 0.3)', bgcolor: 'rgba(0,0,0,0.2)', display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2 }}>
                 <Box className="metric-node">
-                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.65rem' }}>
+                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontFamily: "'Fira Code', monospace", fontSize: '0.65rem' }}>
                     ACTIVE HW SLEDS
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: 'monospace', color: '#06b6d4', mt: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: "'Fira Code', monospace", color: '#C778DD', mt: 0.5 }}>
                     {simStatus === 'running' ? `${activeNodes} / 64` : '42 / 64'}
                   </Typography>
                 </Box>
                 <Box className="metric-node">
-                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.65rem' }}>
+                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontFamily: "'Fira Code', monospace", fontSize: '0.65rem' }}>
                     KAFKA STREAM INGESTION
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: 'monospace', color: '#6366f1', mt: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: "'Fira Code', monospace", color: '#ABB2BF', mt: 0.5 }}>
                     {simStatus === 'running' ? `${queueSize} msg/s` : '0 msg/s'}
                   </Typography>
                 </Box>
                 <Box className="metric-node">
-                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontFamily: 'monospace', fontSize: '0.65rem' }}>
+                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontFamily: "'Fira Code', monospace", fontSize: '0.65rem' }}>
                     P95 RUNTIME LATENCY
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700, fontFamily: 'monospace', color: '#10b981', mt: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: "'Fira Code', monospace", color: '#10b981', mt: 0.5 }}>
                     {simStatus === 'running' ? `${p95Latency} ms` : '21 ms'}
                   </Typography>
                 </Box>
@@ -350,7 +349,7 @@ const SummitSimulator = () => {
             {/* AI RCA Output Panel */}
             <Card
               className={`ai-rca-panel ${simStatus === 'failed' ? 'error-active' : ''} ${rcaStatus === 'diagnosed' ? 'analyzed' : ''}`}
-              sx={{ p: 3, border: '1px solid rgba(255,255,255,0.05)' }}
+              sx={{ p: 3, border: '1px solid rgba(171, 178, 191, 0.3)' }}
             >
               {rcaStatus === 'analyzing' && <div className="ai-scan-glow" />}
 
@@ -358,10 +357,10 @@ const SummitSimulator = () => {
                 {simStatus === 'idle' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ opacity: 0.6 }}>
-                      <Brain size={28} color="#94a3b8" />
+                      <Brain size={28} color="#ABB2BF" />
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>RCA Agent Telemetry</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>Run a failing test suite to trigger AI Root Cause Analysis.</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: "'Fira Code', monospace" }}>RCA Agent Telemetry</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: "'Fira Code', monospace" }}>Run a failing test suite to trigger AI Root Cause Analysis.</Typography>
                       </Box>
                     </Stack>
                   </motion.div>
@@ -372,8 +371,8 @@ const SummitSimulator = () => {
                     <Stack direction="row" spacing={2} alignItems="center">
                       <CheckCircle size={28} color="#10b981" />
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#10b981' }}>Pipeline execution succeeded</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>No hardware telemetry error codes found. AI diagnostic search skipped.</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#10b981', fontFamily: "'Fira Code', monospace" }}>Pipeline execution succeeded</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: "'Fira Code', monospace" }}>No hardware telemetry error codes found. AI diagnostic search skipped.</Typography>
                       </Box>
                     </Stack>
                   </motion.div>
@@ -382,10 +381,10 @@ const SummitSimulator = () => {
                 {simStatus === 'running' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <Stack direction="row" spacing={2} alignItems="center" sx={{ opacity: 0.8 }}>
-                      <Activity size={24} style={{ color: '#06b6d4' }} />
+                      <Activity size={24} style={{ color: '#C778DD' }} />
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>Monitoring execution telemetry...</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>Awaiting pipeline completion. Event triggers bound to Kafka log brokers.</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, fontFamily: "'Fira Code', monospace" }}>Monitoring execution telemetry...</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: "'Fira Code', monospace" }}>Awaiting pipeline completion. Event triggers bound to Kafka log brokers.</Typography>
                       </Box>
                     </Stack>
                   </motion.div>
@@ -397,21 +396,26 @@ const SummitSimulator = () => {
                       <Stack direction="row" spacing={2} alignItems="center">
                         <AlertTriangle size={32} color="#f43f5e" />
                         <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 700, color: '#f43f5e' }}>FAULT DETECTED: Execution Aborted</Typography>
-                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Hardware harness caught assertion fail. Logs indexed.</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 600, color: '#f43f5e', fontFamily: "'Fira Code', monospace" }}>FAULT DETECTED: Execution Aborted</Typography>
+                          <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: "'Fira Code', monospace" }}>Hardware harness caught assertion fail. Logs indexed.</Typography>
                         </Box>
                       </Stack>
                       <Button
-                        variant="contained"
+                        variant="outlined"
                         className="pulsing-rca-btn"
                         onClick={runAiRca}
                         startIcon={<Brain size={16} />}
                         sx={{
-                          background: accentGradient,
+                          borderColor: '#C778DD',
+                          color: '#C778DD',
                           px: 3,
                           py: 1,
                           fontSize: '0.8rem',
-                          fontFamily: 'monospace'
+                          fontFamily: "'Fira Code', monospace",
+                          '&:hover': {
+                            borderColor: '#C778DD',
+                            bgcolor: 'rgba(199, 120, 221, 0.1)'
+                          }
                         }}
                       >
                         RUN AI RCA
@@ -423,10 +427,10 @@ const SummitSimulator = () => {
                 {rcaStatus === 'analyzing' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     <Stack direction="row" spacing={3} alignItems="center">
-                      <CircularProgress size={24} color="secondary" />
+                      <CircularProgress size={24} sx={{ color: '#C778DD' }} />
                       <Box>
-                        <Typography variant="body2" sx={{ fontWeight: 700, color: '#818cf8' }}>AI AGENT: SCANNING LOG STREAMS & CALLSTACKS</Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#C778DD', fontFamily: "'Fira Code', monospace" }}>AI AGENT: SCANNING LOG STREAMS & CALLSTACKS</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontFamily: "'Fira Code', monospace" }}>
                           Analyzing AST dump... Matching telemetry logs (Confidence: {aiConfidence}%)
                         </Typography>
                       </Box>
@@ -436,14 +440,14 @@ const SummitSimulator = () => {
 
                 {rcaStatus === 'diagnosed' && rcaDiagnosis && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ width: '100%' }}>
-                    <Box sx={{ borderBottom: '1px solid rgba(99, 102, 241, 0.1)', pb: 1.5, mb: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ borderBottom: '1px solid rgba(171, 178, 191, 0.3)', pb: 1.5, mb: 1.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Stack direction="row" spacing={1.5} alignItems="center">
-                        <Brain size={22} color="#818cf8" />
-                        <Typography variant="body2" sx={{ fontWeight: 800, color: '#818cf8', textTransform: 'uppercase' }}>
+                        <Brain size={22} color="#C778DD" />
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: '#C778DD', textTransform: 'uppercase', fontFamily: "'Fira Code', monospace" }}>
                           RCA Agent Diagnosis: {rcaDiagnosis.type}
                         </Typography>
                       </Stack>
-                      <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#10b981', bgcolor: 'rgba(16, 185, 129, 0.08)', px: 1.5, py: 0.5, borderRadius: '4px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                      <Typography variant="caption" sx={{ fontFamily: "'Fira Code', monospace", color: '#10b981', bgcolor: 'rgba(16, 185, 129, 0.08)', px: 1.5, py: 0.5, borderRadius: '4px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                         CONFIDENCE: {rcaDiagnosis.confidence}
                       </Typography>
                     </Box>
@@ -457,9 +461,9 @@ const SummitSimulator = () => {
                         <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', fontWeight: 600 }}>ANALYSIS DETAILED TIMELINE</Typography>
                         <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.85rem', lineHeight: 1.5 }}>{rcaDiagnosis.details}</Typography>
                       </Box>
-                      <Box sx={{ bgcolor: 'rgba(99, 102, 241, 0.04)', p: 1.5, borderRadius: '8px', borderLeft: '3px solid #6366f1' }}>
-                        <Typography variant="caption" sx={{ color: '#818cf8', display: 'block', fontWeight: 600, fontFamily: 'monospace' }}>RECOMMENDED FIX</Typography>
-                        <Typography variant="body2" sx={{ fontFamily: 'monospace', color: '#a5b4fc', fontSize: '0.85rem', mt: 0.5 }}>{rcaDiagnosis.action}</Typography>
+                      <Box sx={{ bgcolor: 'rgba(199, 120, 221, 0.06)', p: 1.5, borderRadius: '4px', borderLeft: '3px solid #C778DD' }}>
+                        <Typography variant="caption" sx={{ color: '#C778DD', display: 'block', fontWeight: 600, fontFamily: "'Fira Code', monospace" }}>RECOMMENDED FIX</Typography>
+                        <Typography variant="body2" sx={{ fontFamily: "'Fira Code', monospace", color: '#D898EB', fontSize: '0.85rem', mt: 0.5 }}>{rcaDiagnosis.action}</Typography>
                       </Box>
                     </Stack>
                   </motion.div>

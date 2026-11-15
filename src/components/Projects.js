@@ -16,7 +16,7 @@ const Projects = () => {
     {
       type: 'Distributed Platform',
       icon: Terminal,
-      iconColor: '#06b6d4',
+      iconColor: '#C778DD',
       title: 'Summit: Test Orchestration & Validation',
       description: 'Distributed test orchestration platform at Micron coordinating hardware validations, event-driven schedulers, and release pipelines across physical hardware nodes.',
       bullets: [
@@ -31,7 +31,7 @@ const Projects = () => {
     {
       type: 'AI Developer Tool',
       icon: Code,
-      iconColor: '#6366f1',
+      iconColor: '#ABB2BF',
       title: 'AST-Driven PR Analysis System',
       description: 'AI-powered repository monitor scanning code changes, auto-generating unit test coverage, and validating commits inside developer environments.',
       bullets: [
@@ -47,11 +47,26 @@ const Projects = () => {
 
   const personalProjects = [
     {
+      type: 'macOS Desktop App',
+      icon: FolderOpen,
+      iconColor: '#C778DD',
+      title: 'FmCUI',
+      description: 'A macOS desktop application integrating Apple Foundation Models for on-device LLM inference, with streaming token-by-token responses and low-latency Markdown/code rendering.',
+      bullets: [
+        'Architected and deployed a macOS application using Electron, React, TypeScript, and Vite, integrating Apple Foundation Models for on-device LLM inference.',
+        'Engineered streaming inference over a local loopback server, processing token-by-token responses with low-latency Markdown/code rendering.',
+        'Built automated CI/CD and release workflows using GitHub Actions and electron-builder for production application packaging and deployment.'
+      ],
+      tech: ['Electron', 'React', 'TypeScript', 'Vite', 'Apple Foundation Models', 'GitHub Actions'],
+      linkText: 'View Product Portfolio',
+      linkUrl: 'https://suyash-03.github.io/fmcui-product-portfolio/'
+    },
+    {
       type: "Students' Union Project",
       icon: FolderOpen,
-      iconColor: '#6366f1',
+      iconColor: '#ABB2BF',
       title: 'BITS SU App',
-      description: 'Engineered the official Students\' Union mobile application serving 8,000+ active campus users and processing over ₹6M+ in monthly transaction payments.',
+      description: "Engineered the official Students' Union mobile application serving 8,000+ active campus users and processing over ₹6M+ in monthly transaction payments.",
       bullets: [
         'Implemented secure QR-based token authentication for payment processing & Google Sign-In (SSO).',
         'Streamlined unified system state handling with Provider for real-time Google Maps & FCM integration.',
@@ -64,7 +79,7 @@ const Projects = () => {
     {
       type: 'Academic Department Project',
       icon: FolderOpen,
-      iconColor: '#06b6d4',
+      iconColor: '#ABB2BF',
       title: 'StudyDeck',
       description: 'The official semester scheduler app of the Academic Department, BITS Pilani, facilitating real-time timetable generation and automated conflict resolution for thousands of students.',
       bullets: [
@@ -83,10 +98,10 @@ const Projects = () => {
   return (
     <Box component="section" id="projects" sx={{ py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
-        <SectionTitle number="03.">Featured Code</SectionTitle>
+        <SectionTitle>featured-code</SectionTitle>
 
         {/* Tab switcher for Work vs Personal Projects */}
-        <Stack direction="row" spacing={3} justifyContent="center" sx={{ mb: 6, borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+        <Stack direction="row" spacing={3} justifyContent="center" sx={{ mb: 6, borderBottom: '1px solid rgba(171, 178, 191, 0.3)' }}>
           <Box
             className={`project-tab-btn ${activeCategory === 'work' ? 'active' : ''}`}
             onClick={() => setActiveCategory('work')}
@@ -116,7 +131,7 @@ const Projects = () => {
                 gap: 4
               }}
             >
-              {activeProjects.map((project, index) => {
+              {activeProjects.map((project) => {
                 const IconComponent = project.icon;
                 return (
                   <motion.div
@@ -128,17 +143,19 @@ const Projects = () => {
                     style={{ display: 'flex', flexDirection: 'column' }}
                   >
                     <Card className="bento-card" sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      {/* Dot corner decoration */}
+                      <div className="dot-corner top-right" />
                       <CardContent sx={{ p: 4, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-                          <IconComponent size={20} color={project.iconColor} />
-                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>
+                          <IconComponent size={18} color={project.iconColor} />
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontFamily: "'Fira Code', monospace", fontSize: '0.8rem' }}>
                             {project.type}
                           </Typography>
                         </Stack>
-                        <Typography variant="h5" sx={{ fontWeight: 800, mb: 2 }}>
+                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 2, fontFamily: "'Fira Code', monospace", fontSize: '1.1rem' }}>
                           {project.title}
                         </Typography>
-                        <Typography color="text.secondary" sx={{ mb: 3, lineHeight: 1.7, fontSize: '0.95rem', flexGrow: 1 }}>
+                        <Typography color="text.secondary" sx={{ mb: 3, lineHeight: 1.7, fontSize: '0.9rem', flexGrow: 1, fontFamily: "'Fira Code', monospace" }}>
                           {project.description}
                         </Typography>
                         <Stack component="ul" spacing={1.5} sx={{ p: 0, m: 0, listStyle: 'none', mb: 4 }}>
@@ -146,8 +163,9 @@ const Projects = () => {
                             <Box
                               component="li" key={idx}
                               sx={{
-                                pl: 3, position: 'relative', color: 'text.secondary', fontSize: '0.9rem', lineHeight: 1.6,
-                                '&::before': { content: '"•"', position: 'absolute', left: 0, color: project.iconColor, fontWeight: 'bold' }
+                                pl: 3, position: 'relative', color: 'text.secondary', fontSize: '0.85rem', lineHeight: 1.6,
+                                fontFamily: "'Fira Code', monospace",
+                                '&::before': { content: '"▸"', position: 'absolute', left: 0, color: project.iconColor }
                               }}
                             >
                               {bullet}
@@ -160,31 +178,22 @@ const Projects = () => {
                               key={t}
                               label={t}
                               size="small"
-                              sx={{
-                                bgcolor: 'rgba(255, 255, 255, 0.02)',
-                                border: '1px solid rgba(255, 255, 255, 0.05)',
-                                color: 'text.secondary',
-                                fontFamily: "'JetBrains Mono', monospace",
-                                fontSize: '0.75rem',
-                                transition: 'all 0.3s',
-                                '&:hover': {
-                                  borderColor: project.iconColor,
-                                  color: project.iconColor,
-                                  bgcolor: `${project.iconColor}04`
-                                }
-                              }}
+                              className="skill-tag"
                             />
                           ))}
                         </Stack>
                         <Box>
                           <Button
-                            variant="outlined" size="small" endIcon={<ExternalLink size={16} />}
+                            variant="outlined" size="small" endIcon={<ExternalLink size={14} />}
                             href={project.linkUrl}
                             target={project.linkUrl.startsWith('http') ? "_blank" : "_self"}
                             rel={project.linkUrl.startsWith('http') ? "noopener noreferrer" : ""}
                             sx={{
-                              borderColor: 'rgba(255,255,255,0.1)', color: 'text.primary',
-                              '&:hover': { borderColor: project.iconColor, bgcolor: 'rgba(255,255,255,0.02)' }
+                              borderColor: '#ABB2BF',
+                              color: '#ABB2BF',
+                              fontFamily: "'Fira Code', monospace",
+                              fontSize: '0.8rem',
+                              '&:hover': { borderColor: '#C778DD', color: '#C778DD', bgcolor: 'rgba(199,120,221,0.05)' }
                             }}
                           >
                             {project.linkText}

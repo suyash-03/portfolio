@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T16:38:03.723Z",
+  "title": "Design System: Suyash Singh Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "orange": {
+        "role": "primary",
+        "displayName": "Editorial Orange"
+      },
+      "blue-tint": {
+        "role": "secondary",
+        "displayName": "Cool Blue Tint"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero name only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Readable portfolio copy."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "Simulated execution log only."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "reveal",
+        "value": "cubic-bezier(0.19, 1, 0.22, 1)",
+        "purpose": "Subtle section entrance over 650ms."
+      },
+      {
+        "name": "hero-gradient",
+        "value": "18s ease-in-out alternate",
+        "purpose": "Slow color drift in the hero."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "900px"
+      },
+      {
+        "name": "mobile",
+        "value": "700px"
+      },
+      {
+        "name": "small-mobile",
+        "value": "440px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary navigation and lab action.",
+      "html": "<button class=\"ds-button\">Explore my work</button>",
+      "css": ".ds-button{background:#101010;color:#fff;border:0;border-radius:0;padding:15px 19px;font:700 14px 'Rethink Sans',sans-serif;cursor:pointer;transition:background .25s,transform .25s}.ds-button:hover{background:#1e3d59;transform:translateY(-2px)}.ds-button:focus-visible{outline:2px solid #cd4900;outline-offset:4px}"
+    },
+    {
+      "name": "Accent Button",
+      "kind": "button",
+      "refersTo": "button-accent",
+      "description": "Contact form action.",
+      "html": "<button class=\"ds-accent\">Open email draft</button>",
+      "css": ".ds-accent{background:#fa9819;color:#101010;border:0;border-radius:0;padding:15px 19px;font:700 14px 'Rethink Sans',sans-serif;cursor:pointer;transition:background .25s}.ds-accent:hover{background:#ffb453}.ds-accent:focus-visible{outline:2px solid #cd4900;outline-offset:4px}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "description": "Contact form field.",
+      "html": "<input class=\"ds-input\" placeholder=\"Your name\" />",
+      "css": ".ds-input{display:block;width:100%;border:1px solid #e5e5e5;border-radius:0;background:#fff;color:#101010;padding:12px 13px;font:400 14px 'Rethink Sans',sans-serif}.ds-input:focus-visible{outline:2px solid #cd4900;outline-offset:2px}"
+    },
+    {
+      "name": "Technology Tag",
+      "kind": "chip",
+      "description": "Small supporting technology label.",
+      "html": "<span class=\"ds-tag\">FastAPI</span>",
+      "css": ".ds-tag{display:inline-block;border:1px solid #e5e5e5;border-radius:100px;padding:6px 10px;color:#565656;font:650 11px 'Rethink Sans',sans-serif}"
+    },
+    {
+      "name": "Project Row",
+      "kind": "custom",
+      "description": "Open editorial row for a project.",
+      "html": "<div class=\"ds-row\"><small>Distributed platform</small><strong>Summit</strong><p>High-concurrency orchestration for firmware validation.</p></div>",
+      "css": ".ds-row{border-top:1px solid #e5e5e5;padding:32px 0;color:#101010;font-family:'Rethink Sans',sans-serif}.ds-row small{display:block;color:#565656;font-size:11px;text-transform:uppercase;letter-spacing:.06em}.ds-row strong{display:block;font-size:30px;font-weight:500;margin:12px 0}.ds-row p{margin:0;color:#565656;font-size:14px;line-height:1.7}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Editorial Engineering Portfolio",
+    "overview": "A portfolio organized like a clean brand guide: a bright hero, a white reading surface, sharp type, thin rules, and specific engineering evidence.",
+    "keyCharacteristics": [
+      "White editorial pages",
+      "Orange numbered sections",
+      "Blue-tinted system surfaces",
+      "Technical detail without terminal decoration"
+    ],
+    "rules": [
+      {
+        "name": "Proof before ornament",
+        "body": "Lead with shipped systems and measurable outcomes.",
+        "section": "layout"
+      },
+      {
+        "name": "Code has a place",
+        "body": "Use monospace only where the content is actual code or simulated logs.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Keep work rows open and scannable.",
+      "Use orange sparingly to orient and emphasize."
+    ],
+    "donts": [
+      "Do not add decorative dashboards or terminal chrome.",
+      "Do not hide long-form evidence behind cards."
+    ]
+  }
+}
