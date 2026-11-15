@@ -44,7 +44,7 @@
       {
         "name": "reveal",
         "value": "cubic-bezier(0.19, 1, 0.22, 1)",
-        "purpose": "Subtle section entrance over 650ms."
+        "purpose": "Calm section and metric reveals over 750ms."
       },
       {
         "name": "hero-gradient",

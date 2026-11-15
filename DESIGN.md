@@ -14,7 +14,7 @@ colors:
 typography:
   display:
     fontFamily: "Rethink Sans, sans-serif"
-    fontSize: "clamp(5.2rem, 12.3vw, 12.4rem)"
+    fontSize: "clamp(4.4rem, 8.5vw, 8rem)"
     fontWeight: 520
     lineHeight: 1
     letterSpacing: "-0.065em"
@@ -57,7 +57,7 @@ components:
 
 ## Overview
 
-The portfolio uses the white editorial structure, crisp type, thin rules, and restrained orange and blue palette of the user-supplied Figma reference. The content stays focused on concrete software engineering work. Motion is slow and limited to the hero gradient, section entry, and responsive controls.
+The portfolio uses the white editorial structure, crisp type, thin rules, and restrained orange and blue palette of the user-supplied Figma reference. The compact hero puts technical work and results in the first viewport. Motion reveals sections, project rows, system steps, and metrics as visitors scroll.
 
 ## Colors
 
