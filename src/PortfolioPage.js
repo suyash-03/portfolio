@@ -34,14 +34,16 @@ function Header({ onOpenLab }) {
   </div></header>;
 }
 
-function Heading({ children, aside }) { return <div className="section-heading"><h2>{children}</h2><p>{aside}</p></div>; }
+function Heading({ children, aside }) { return <div className="section-heading"><h2>{children}</h2>{aside && <p>{aside}</p>}</div>; }
+
+function DotField({ bottom = false }) { return <div className={'dot-field' + (bottom ? ' dot-field-bottom' : '')} aria-hidden="true" />; }
 
 function Hero() {
   const reduceMotion = useReducedMotion();
   return <section className="hero" id="home"><div className="page-width hero-inner">
     <div className="hero-topline"><span>Software engineer · Bengaluru, India</span><span>Portfolio / 2026</span></div>
     <motion.h1 initial={reduceMotion ? false : { opacity: 0.65, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}>Suyash <span>Singh.</span></motion.h1>
-    <motion.div className="hero-bottom" initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}><p className="hero-thesis">I build <em>distributed orchestration systems</em> that make firmware validation faster and easier to debug.</p><div className="hero-intro"><p>At Micron, I lead development of a FastAPI/PostgreSQL platform for hardware validation jobs. I also built Kafka/MSK telemetry ingestion and a FastMCP server for production debugging.</p><div className="hero-actions"><a className="button button-dark" href="#experience">See my experience <ArrowUpRight size={17} /></a><a className="text-link" href="#contact">Get in touch <ArrowRight size={17} /></a></div></div></motion.div>
+    <motion.div className="hero-bottom" initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}><p className="hero-thesis">I build <em>distributed orchestration systems</em> that make firmware validation faster and easier to debug.</p><div className="hero-intro"><p>At Micron, I lead development of an enterprise test automation platform for data center SSDs, built with FastAPI, React, and PostgreSQL.</p><div className="hero-actions"><a className="button button-dark" href="#experience">See my experience <ArrowUpRight size={17} /></a><a className="text-link" href="#contact">Get in touch <ArrowRight size={17} /></a></div></div></motion.div>
     <a className="scroll-cue" href="#experience"><ArrowDown size={17} /> Scroll to explore</a>
   </div></section>;
 }
@@ -65,12 +67,12 @@ function Projects({ onOpenLab }) {
 }
 
 function Work({ labOpen, onOpenLab, onCloseLab }) {
-  return <section className="section work-section" id="work"><div className="page-width">
+  return <section className="section work-section" id="work"><DotField /><div className="page-width">
     <Reveal><Heading aside="Platform work and independent projects">Selected systems and projects.</Heading></Reveal>
     <Reveal className="featured-case">
-      <div className="featured-case-head"><span>Distributed orchestration platform / Summit</span><span>2024 — present</span></div>
+      <div className="featured-case-head"><span>Enterprise SSD test automation / Summit</span><span>2025 — present</span></div>
       <div className="featured-case-grid">
-        <div><h3>Making hardware validation easier to run, scale and understand.</h3><p>Summit coordinates high-concurrency firmware jobs across physical hardware. I led platform development and built the event ingestion path that handles 100K+ telemetry events each day, supporting real-time services and AI driven root cause analysis.</p><button className="light-link simulation-trigger" type="button" aria-expanded={labOpen} aria-controls="summit" onClick={labOpen ? onCloseLab : onOpenLab}>{labOpen ? 'View the execution path' : 'Try the interactive simulation'} <ArrowUpRight size={18} /></button></div>
+        <div><h3>Making hardware validation easier to run, scale and understand.</h3><p>Summit is Micron’s enterprise data center SSD test automation platform. Built with FastAPI, React, and PostgreSQL, it orchestrates high-concurrency validation jobs across physical hardware. I built the Kafka/MSK telemetry path handling 100K+ events each day and supporting AI-assisted root cause analysis.</p><button className="light-link simulation-trigger" type="button" aria-expanded={labOpen} aria-controls="summit" onClick={labOpen ? onCloseLab : onOpenLab}>{labOpen ? 'View the execution path' : 'Try the interactive simulation'} <ArrowUpRight size={18} /></button></div>
         <div className="featured-visual" id="summit">{labOpen ? <SummitLab onClose={onCloseLab} /> : <SystemDiagram />}</div>
       </div>
       <div className="featured-outcomes"><Reveal delay={0.05}><strong>2×</strong><span>workload supported</span></Reveal><Reveal delay={0.15}><strong>30%</strong><span>lower P95 API latency</span></Reveal><Reveal delay={0.25}><strong>100K+</strong><span>telemetry events / day</span></Reveal></div>
@@ -80,7 +82,7 @@ function Work({ labOpen, onOpenLab, onCloseLab }) {
 }
 
 function Experience() {
-  return <section className="section experience-section" id="experience"><div className="page-width"><Reveal><Heading aside="Where I have worked">Experience shaped by building.</Heading></Reveal><div className="experience-list">{experiences.map(item => <Reveal className="experience-item" key={item.company + item.period}><div className="experience-date">{item.period}<span>{item.location}</span></div><div className="experience-body"><div className="experience-title"><h3>{item.role}</h3><span>{item.company}</span></div><ul>{item.points.map(point => <li key={point}>{point}</li>)}</ul><div className="tag-list">{item.tech.slice(0, 6).map(tech => <span key={tech}>{tech}</span>)}</div></div></Reveal>)}</div></div></section>;
+  return <section className="section experience-section" id="experience"><DotField /><div className="page-width"><Reveal><Heading aside="Where I have worked">Experience shaped by building.</Heading></Reveal><div className="experience-list">{experiences.map(item => <Reveal className="experience-item" key={item.company + item.period}><div className="experience-date">{item.period}<span>{item.location}</span></div><div className="experience-body"><div className="experience-title"><h3>{item.role}</h3><span>{item.company}</span></div><ul>{item.points.map(point => <li key={point}>{point}</li>)}</ul><div className="tag-list">{item.tech.slice(0, 6).map(tech => <span key={tech}>{tech}</span>)}</div></div></Reveal>)}</div></div></section>;
 }
 
 const simulationSteps = ['Checking scheduler capacity and reserving a hardware runner', 'Fetching firmware image and preparing the test environment', 'Running CI checks and nightly validation suite', 'Collecting telemetry and storing execution logs'];
@@ -97,11 +99,16 @@ function SummitLab({ onClose }) {
   const [diagnosed, setDiagnosed] = useState(false);
   const timer = useRef(null);
   const diagnosisTimer = useRef(null);
+  const panel = useRef(null);
 
   useEffect(() => () => {
     window.clearInterval(timer.current);
     window.clearTimeout(diagnosisTimer.current);
   }, []);
+
+  useEffect(() => {
+    if (panel.current) panel.current.scrollTop = view === 'configure' ? 0 : panel.current.scrollHeight;
+  }, [view, logs, status, diagnosed]);
 
   const reset = () => {
     window.clearInterval(timer.current);
@@ -124,8 +131,9 @@ function SummitLab({ onClose }) {
     let step = 0;
     timer.current = window.setInterval(() => {
       if (step < simulationSteps.length) {
-        setLogs(current => [...current, simulationSteps[step]]);
+        const message = simulationSteps[step];
         step += 1;
+        setLogs(current => [...current, message]);
       } else {
         window.clearInterval(timer.current);
         setLogs(current => [...current, injectError ? 'Validation stopped: readback mismatch on hardware runner' : 'Validation complete: all checks passed']);
@@ -147,7 +155,7 @@ function SummitLab({ onClose }) {
       ? 'The validation driver may read refresh registers before the LPDDR5 training cycle settles. Check the harness timing.'
       : 'The executor may have lost its heartbeat while buffering logs. Check runner connectivity and socket limits.';
 
-  return <div className="inline-lab" role="region" aria-label="Interactive firmware validation simulation">
+  return <div className="inline-lab" ref={panel} role="region" aria-label="Interactive firmware validation simulation">
     <div className="inline-lab-head"><div><span>Interactive / simulated</span><h4 tabIndex={-1}>Run firmware validation</h4></div><button type="button" onClick={onClose} aria-label="Close simulation"><X size={18} /></button></div>
     <p className="inline-lab-note">An illustrative workflow with simulated data. No connection to Micron systems.</p>
     {view === 'configure' ? <div className="inline-lab-controls">
@@ -169,7 +177,7 @@ function SummitLab({ onClose }) {
 }
 
 function About() {
-  return <section className="section about-section" id="about"><div className="page-width"><Reveal><Heading aside="A little more context">The person behind the systems.</Heading></Reveal><div className="about-grid"><Reveal className="portrait-wrap"><img src={profilePhoto} alt="Suyash Singh at BITS Pilani" loading="lazy" /></Reveal><div className="about-copy"><Reveal><p className="about-lead">I’m Suyash, a software engineer who enjoys turning complex operational problems into reliable tools people can use every day.</p><p>At Micron, I work on distributed orchestration for firmware and validation teams, automation and AI-assisted engineering workflows. I graduated from BITS Pilani with a B.E. in Electrical and Electronics Engineering.</p><p>Outside work, I enjoy competitive programming, badminton, the gym and gaming.</p></Reveal><Reveal className="about-facts"><div><span>Currently</span><strong>Software Engineer 2, Micron</strong></div><div><span>Education</span><strong>B.E., BITS Pilani · 2020–2024</strong></div><div><span>Also interested in</span><strong>Distributed systems · developer experience</strong></div></Reveal></div></div><Reveal className="skills-block"><h3>Tools I work with</h3><div className="skills-grid">{skillCategories.map(category => <div key={category.title}><h4>{category.title}</h4><p>{category.skills.join(' · ')}</p></div>)}</div></Reveal></div></section>;
+  return <section className="section about-section" id="about"><DotField /><div className="page-width"><Reveal><Heading aside="A little more context">The person behind the systems.</Heading></Reveal><div className="about-grid"><Reveal className="portrait-wrap"><img src={profilePhoto} alt="Suyash Singh at BITS Pilani" loading="lazy" /></Reveal><div className="about-copy"><Reveal><p className="about-lead">I’m Suyash, a software engineer who enjoys turning complex operational problems into reliable tools people can use every day.</p><p>At Micron, I work on distributed orchestration for firmware and validation teams, test automation, and AI-assisted engineering workflows. I graduated from BITS Pilani with a B.E. in Electrical and Electronics Engineering.</p><p>Outside work, I enjoy competitive programming, badminton, the gym and gaming.</p></Reveal><Reveal className="about-facts"><div><span>Currently</span><strong>Software Engineer 2, Micron</strong></div><div><span>Education</span><strong>B.E., BITS Pilani · 2020–2024</strong></div><div><span>Also interested in</span><strong>Distributed systems · developer experience</strong></div></Reveal></div></div><Reveal className="skills-block"><h3>Tools I work with</h3><div className="skills-grid">{skillCategories.map(category => <div key={category.title}><h4>{category.title}</h4><p>{category.skills.join(' · ')}</p></div>)}</div></Reveal></div></section>;
 }
 
 function Contact() {
@@ -183,7 +191,7 @@ function Contact() {
 }
 
 function Recognition() {
-  return <section className="section recognition-section"><div className="page-width"><Reveal><Heading aside="From the 2026 résumé">A few markers along the way.</Heading></Reveal><div className="recognition-grid"><Reveal delay={0.05}><strong>1800+</strong><span>LeetCode rating · top 7%</span></Reveal><Reveal delay={0.15}><strong>99.20</strong><span>JEE Main percentile · top 0.8% nationwide</span></Reveal><Reveal delay={0.25}><strong>336</strong><span>BITSAT 2020 score · top ~1%</span></Reveal></div></div></section>;
+  return <section className="section recognition-section"><DotField /><div className="page-width"><Reveal><Heading>A few markers along the way.</Heading></Reveal><div className="recognition-grid"><Reveal delay={0.05}><strong>1800+</strong><span>LeetCode rating · top 7%</span></Reveal><Reveal delay={0.15}><strong>99.20</strong><span>JEE Main percentile · top 0.8% nationwide</span></Reveal><Reveal delay={0.25}><strong>336</strong><span>BITSAT 2020 score · top ~1%</span></Reveal></div></div><DotField bottom /></section>;
 }
 
 function Footer() { return <footer className="site-footer"><div className="page-width footer-inner"><a className="wordmark" href="#home">Suyash<span>Singh</span><i>.</i></a><span>Designed and engineered by Suyash Singh · © {new Date().getFullYear()}</span><a href="#home">Back to top ↑</a></div></footer>; }

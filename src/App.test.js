@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import App from './App';
 
 jest.mock('framer-motion', () => ({
@@ -37,5 +37,26 @@ test('opens the simulator in place of the Summit diagram and restores the diagra
     expect(screen.getByText('API + state')).toBeInTheDocument();
   } finally {
     window.requestAnimationFrame = requestAnimationFrame;
+  }
+});
+
+test('shows every simulated execution step in order', () => {
+  jest.useFakeTimers();
+  const requestAnimationFrame = window.requestAnimationFrame;
+  window.requestAnimationFrame = jest.fn();
+
+  try {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Try the interactive simulation' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Run validation' }));
+    act(() => jest.advanceTimersByTime(3250));
+
+    const log = screen.getByRole('log');
+    expect(log).toHaveTextContent('04Collecting telemetry and storing execution logs');
+    expect(log).toHaveTextContent('05Validation stopped: readback mismatch on hardware runner');
+    expect(screen.getByText('Needs review')).toBeInTheDocument();
+  } finally {
+    window.requestAnimationFrame = requestAnimationFrame;
+    jest.useRealTimers();
   }
 });

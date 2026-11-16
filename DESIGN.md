@@ -57,7 +57,7 @@ components:
 
 ## Overview
 
-The portfolio uses the white editorial structure, crisp type, thin rules, and restrained orange and blue palette of the user-supplied Figma reference. The compact hero puts technical work and results in the first viewport. Motion reveals sections, project rows, system steps, and metrics as visitors scroll.
+The portfolio uses the white editorial structure, crisp type, thin rules, and restrained orange and blue palette of the user-supplied Figma reference. The compact hero puts the engineering focus and current platform work in one reading column. Motion reveals sections, project rows, system steps, and metrics as visitors scroll.
 
 ## Colors
 
@@ -69,7 +69,7 @@ Rethink Sans is used for both display and reading text. Large headings use tight
 
 ## Layout
 
-The content width is 1320px with 40px desktop gutters and 18px mobile gutters. Experience follows the hero, then the selected systems and projects. Sections use 120px vertical padding on desktop and 78px on mobile. Desktop content favors asymmetric two-column compositions; at 700px it stacks into one column.
+The content width is 1320px with 40px desktop gutters and 18px mobile gutters. Experience follows the hero, then the selected systems and projects. Dense blue-to-orange dot fields bridge the major sections and reverse their gradient on hover. Desktop content favors asymmetric two-column compositions; at 700px it stacks into one column. The inline simulator keeps a fixed panel height and scrolls its own output as a run progresses.
 
 ## Elevation & Depth
 
