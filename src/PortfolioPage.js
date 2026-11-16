@@ -6,7 +6,7 @@ import profilePhoto from './profile.png';
 
 const resumeUrl = 'https://drive.google.com/file/d/1k3hBRM9GzNaaKSWFixiYYKq5Ft4h1ITu/view?usp=sharing';
 const emailAddress = 'suyash.singh9450@gmail.com';
-const nav = [['Work', 'work'], ['Experience', 'experience'], ['Lab', 'summit'], ['About', 'about'], ['Contact', 'contact']];
+const nav = [['Experience', 'experience'], ['Projects', 'work'], ['Lab', 'summit'], ['About', 'about'], ['Contact', 'contact']];
 
 const projects = {
   work: [
@@ -25,11 +25,11 @@ function Reveal({ children, className = '', delay = 0 }) {
   return <motion.div className={className} initial={reduceMotion ? false : { opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.75, delay, ease: [0.19, 1, 0.22, 1] }}>{children}</motion.div>;
 }
 
-function Header() {
+function Header({ onOpenLab }) {
   const [open, setOpen] = useState(false);
   return <header className="site-header"><div className="page-width header-inner">
     <a className="wordmark" href="#home" aria-label="Suyash Singh, home">Suyash<span>Singh</span><i>.</i></a>
-    <nav className={'main-nav' + (open ? ' is-open' : '')} aria-label="Main navigation">{nav.map(([label, id]) => <a key={id} href={'#' + id} onClick={() => setOpen(false)}>{label}</a>)}<a className="nav-resume" href={resumeUrl} target="_blank" rel="noopener noreferrer">Résumé <ArrowUpRight size={15} /></a></nav>
+    <nav className={'main-nav' + (open ? ' is-open' : '')} aria-label="Main navigation">{nav.map(([label, id]) => <a key={id} href={'#' + id} onClick={() => { if (id === 'summit') onOpenLab(); setOpen(false); }}>{label}</a>)}<a className="nav-resume" href={resumeUrl} target="_blank" rel="noopener noreferrer">Résumé <ArrowUpRight size={15} /></a></nav>
     <button className="menu-toggle" type="button" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X size={23} /> : <Menu size={23} />}</button>
   </div></header>;
 }
@@ -41,24 +41,42 @@ function Hero() {
   return <section className="hero" id="home"><div className="page-width hero-inner">
     <div className="hero-topline"><span>Software engineer · Bengaluru, India</span><span>Portfolio / 2026</span></div>
     <motion.h1 initial={reduceMotion ? false : { opacity: 0.65, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}>Suyash <span>Singh.</span></motion.h1>
-    <motion.div className="hero-bottom" initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}><p className="hero-thesis">I build <em>distributed orchestration systems</em> that make firmware validation faster and easier to debug.</p><div className="hero-intro"><p>Software Engineer 2 at Micron. I led Summit to support 2× the workload with 30% lower P95 API latency, and built telemetry pipelines processing 100K+ events a day.</p><div className="hero-actions"><a className="button button-dark" href="#work">Explore my work <ArrowUpRight size={17} /></a><a className="text-link" href="#contact">Get in touch <ArrowRight size={17} /></a></div></div></motion.div>
-    <a className="scroll-cue" href="#work"><ArrowDown size={17} /> Scroll to explore</a>
+    <motion.div className="hero-bottom" initial={reduceMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75, delay: 0.3, ease: [0.19, 1, 0.22, 1] }}><p className="hero-thesis">I build <em>distributed orchestration systems</em> that make firmware validation faster and easier to debug.</p><div className="hero-intro"><p>At Micron, I lead development of a FastAPI/PostgreSQL platform for hardware validation jobs. I also built Kafka/MSK telemetry ingestion and a FastMCP server for production debugging.</p><div className="hero-actions"><a className="button button-dark" href="#experience">See my experience <ArrowUpRight size={17} /></a><a className="text-link" href="#contact">Get in touch <ArrowRight size={17} /></a></div></div></motion.div>
+    <a className="scroll-cue" href="#experience"><ArrowDown size={17} /> Scroll to explore</a>
   </div></section>;
 }
 
 function SystemDiagram() {
-  const nodes = [['01', 'Event', 'Artifactory webhook'], ['02', 'Orchestration', 'Summit scheduler'], ['03', 'Execution', 'Hardware runners'], ['04', 'Insight', 'Telemetry + RCA']];
+  const nodes = [['01', 'API + state', 'FastAPI · PostgreSQL'], ['02', 'Job scheduler', 'High-concurrency orchestration'], ['03', 'Hardware execution', 'Firmware validation runners'], ['04', 'Event pipeline', 'Kafka · AWS MSK · S3']];
   const reduceMotion = useReducedMotion();
-  return <div className="system-diagram" aria-label="Summit flow: Artifactory webhook to scheduler to hardware runners to logs and root cause analysis">{nodes.map(([number, title, detail], index) => <motion.div className="system-step" key={title} initial={reduceMotion ? false : { opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.6, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}><div className="system-step-top"><span>{number}</span><i /></div><strong>{title}</strong><small>{detail}</small></motion.div>)}</div>;
+  return <div className="system-diagram" aria-label="Summit execution path: FastAPI and PostgreSQL to a job scheduler, hardware validation runners, then a Kafka, AWS MSK and S3 event pipeline"><div className="system-diagram-label"><span>Job lifecycle / Summit</span><span>API → runners → events</span></div>{nodes.map(([number, title, detail], index) => <motion.div className="system-step" key={title} initial={reduceMotion ? false : { opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.6, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}><div className="system-step-top"><span>{number}</span><i /></div><div className="system-step-content"><strong>{title}</strong><small>{detail}</small></div>{index < nodes.length - 1 && <ArrowDown className="system-step-arrow" size={16} aria-hidden="true" />}</motion.div>)}</div>;
 }
 
-function Projects() {
+function Projects({ onOpenLab }) {
   const [category, setCategory] = useState('work');
-  return <div className="projects-block"><div className="projects-header"><h3>More selected projects</h3><div className="project-tabs" role="tablist" aria-label="Project category"><button type="button" role="tab" aria-selected={category === 'work'} onClick={() => setCategory('work')}>At work</button><button type="button" role="tab" aria-selected={category === 'personal'} onClick={() => setCategory('personal')}>Independent</button></div></div><div className="project-list" role="tabpanel">{projects[category].map((project, index) => <Reveal key={project.title} className="project-row" delay={index * 0.05}><div className="project-kind">{project.type}</div><div className="project-copy"><h4>{project.title}</h4><p className="project-summary">{project.summary}</p><p className="project-detail">{project.detail}</p><div className="tag-list">{project.stack.map(tech => <span key={tech}>{tech}</span>)}</div></div><a className="project-link" href={project.href} target={project.href.startsWith('http') ? '_blank' : undefined} rel={project.href.startsWith('http') ? 'noopener noreferrer' : undefined} aria-label={project.action + ': ' + project.title}><ArrowUpRight size={21} /><span>{project.action}</span></a></Reveal>)}</div></div>;
+  return <div className="projects-block">
+    <div className="projects-header"><h3>More selected projects</h3><div className="project-tabs" role="tablist" aria-label="Project category"><button type="button" role="tab" aria-selected={category === 'work'} onClick={() => setCategory('work')}>At work</button><button type="button" role="tab" aria-selected={category === 'personal'} onClick={() => setCategory('personal')}>Independent</button></div></div>
+    <div className="project-list" role="tabpanel">{projects[category].map((project, index) => <Reveal key={project.title} className="project-row" delay={index * 0.05}>
+      <div className="project-kind">{project.type}</div>
+      <div className="project-copy"><h4>{project.title}</h4><p className="project-summary">{project.summary}</p><p className="project-detail">{project.detail}</p><div className="tag-list">{project.stack.map(tech => <span key={tech}>{tech}</span>)}</div></div>
+      <a className="project-link" href={project.href} onClick={project.href === '#summit' ? onOpenLab : undefined} target={project.href.startsWith('http') ? '_blank' : undefined} rel={project.href.startsWith('http') ? 'noopener noreferrer' : undefined} aria-label={project.action + ': ' + project.title}><ArrowUpRight size={21} /><span>{project.action}</span></a>
+    </Reveal>)}</div>
+  </div>;
 }
 
-function Work() {
-  return <section className="section work-section" id="work"><div className="page-width"><Reveal><Heading aside="Selected work at Micron">Engineering work, in context.</Heading></Reveal><Reveal className="featured-case"><div className="featured-case-head"><span>Distributed orchestration platform / Summit</span><span>2024 — present</span></div><div className="featured-case-grid"><div><h3>Making hardware validation easier to run, scale and understand.</h3><p>Summit coordinates high-concurrency firmware jobs across physical hardware. I led platform development and built the event ingestion path that handles 100K+ telemetry events each day, supporting real-time services and AI driven root cause analysis.</p><a className="light-link" href="#summit">Try the interactive simulation <ArrowUpRight size={18} /></a></div><SystemDiagram /></div><div className="featured-outcomes"><Reveal delay={0.05}><strong>2×</strong><span>workload supported</span></Reveal><Reveal delay={0.15}><strong>30%</strong><span>lower P95 API latency</span></Reveal><Reveal delay={0.25}><strong>100K+</strong><span>telemetry events / day</span></Reveal></div></Reveal><Projects /></div></section>;
+function Work({ labOpen, onOpenLab, onCloseLab }) {
+  return <section className="section work-section" id="work"><div className="page-width">
+    <Reveal><Heading aside="Platform work and independent projects">Selected systems and projects.</Heading></Reveal>
+    <Reveal className="featured-case">
+      <div className="featured-case-head"><span>Distributed orchestration platform / Summit</span><span>2024 — present</span></div>
+      <div className="featured-case-grid">
+        <div><h3>Making hardware validation easier to run, scale and understand.</h3><p>Summit coordinates high-concurrency firmware jobs across physical hardware. I led platform development and built the event ingestion path that handles 100K+ telemetry events each day, supporting real-time services and AI driven root cause analysis.</p><button className="light-link simulation-trigger" type="button" aria-expanded={labOpen} aria-controls="summit" onClick={labOpen ? onCloseLab : onOpenLab}>{labOpen ? 'View the execution path' : 'Try the interactive simulation'} <ArrowUpRight size={18} /></button></div>
+        <div className="featured-visual" id="summit">{labOpen ? <SummitLab onClose={onCloseLab} /> : <SystemDiagram />}</div>
+      </div>
+      <div className="featured-outcomes"><Reveal delay={0.05}><strong>2×</strong><span>workload supported</span></Reveal><Reveal delay={0.15}><strong>30%</strong><span>lower P95 API latency</span></Reveal><Reveal delay={0.25}><strong>100K+</strong><span>telemetry events / day</span></Reveal></div>
+    </Reveal>
+    <Projects onOpenLab={onOpenLab} />
+  </div></section>;
 }
 
 function Experience() {
@@ -67,22 +85,87 @@ function Experience() {
 
 const simulationSteps = ['Checking scheduler capacity and reserving a hardware runner', 'Fetching firmware image and preparing the test environment', 'Running CI checks and nightly validation suite', 'Collecting telemetry and storing execution logs'];
 
-function SummitLab() {
+function SummitLab({ onClose }) {
   const [hardware, setHardware] = useState('SSD Gen5 NVMe');
   const [branch, setBranch] = useState('feature/rca-agent');
   const [suite, setSuite] = useState('Nightly Validation Suite');
   const [injectError, setInjectError] = useState(true);
+  const [view, setView] = useState('configure');
   const [status, setStatus] = useState('idle');
   const [logs, setLogs] = useState([]);
   const [diagnosing, setDiagnosing] = useState(false);
   const [diagnosed, setDiagnosed] = useState(false);
   const timer = useRef(null);
   const diagnosisTimer = useRef(null);
-  useEffect(() => () => { window.clearInterval(timer.current); window.clearTimeout(diagnosisTimer.current); }, []);
-  const run = () => { window.clearInterval(timer.current); setStatus('running'); setLogs([]); setDiagnosed(false); setDiagnosing(false); let step = 0; timer.current = window.setInterval(() => { if (step < simulationSteps.length) { const line = simulationSteps[step]; setLogs(current => [...current, line]); step += 1; } else { window.clearInterval(timer.current); setLogs(current => [...current, injectError ? 'Validation stopped: readback mismatch on hardware runner' : 'Validation complete: all checks passed']); setStatus(injectError ? 'failed' : 'success'); } }, 650); };
-  const diagnose = () => { setDiagnosing(true); diagnosisTimer.current = window.setTimeout(() => { setDiagnosing(false); setDiagnosed(true); }, 1200); };
-  const diagnosis = hardware === 'SSD Gen5 NVMe' ? 'The NVMe write path may cross a DMA page boundary, causing a readback mismatch. Check buffer alignment in the validation stage.' : hardware === 'Micron NAND LPDDR5' ? 'The validation driver may read refresh registers before the LPDDR5 training cycle settles. Check the harness timing.' : 'The executor may have lost its heartbeat while buffering logs. Check runner connectivity and socket limits.';
-  return <section className="section lab-section" id="summit"><div className="page-width"><Reveal><Heading aside="An illustrative simulation based on Summit workflows">Take the system for a spin.</Heading></Reveal><Reveal><p className="lab-intro">Configure a firmware validation run and see how orchestration, execution and root cause analysis fit together. This demo uses simulated data and does not connect to Micron systems.</p></Reveal><Reveal className="lab-grid"><div className="lab-controls"><h3>Configure a run</h3><label>Hardware platform<select value={hardware} disabled={status === 'running'} onChange={event => setHardware(event.target.value)}><option>SSD Gen5 NVMe</option><option>Micron NAND LPDDR5</option><option>NorFlash Edge Device</option></select></label><label>Repository branch<select value={branch} disabled={status === 'running'} onChange={event => setBranch(event.target.value)}><option>feature/rca-agent</option><option>main</option><option>release/v4.2</option><option>hotfix/bootloader</option></select></label><label>Test suite<select value={suite} disabled={status === 'running'} onChange={event => setSuite(event.target.value)}><option>Nightly Validation Suite</option><option>CI/CD PR Unit Checks</option><option>Weekly Release Validation</option></select></label><label className="checkbox-row"><input type="checkbox" checked={injectError} disabled={status === 'running'} onChange={event => setInjectError(event.target.checked)} /> Simulate a validation fault</label><button className="button button-dark lab-run" type="button" disabled={status === 'running'} onClick={run}>{status === 'running' ? 'Running validation…' : 'Run validation'} <ArrowRight size={17} /></button></div><div className="lab-output"><div className="lab-output-head"><h3>Execution log</h3><span className={'run-status status-' + status}>{status === 'idle' ? 'Ready' : status === 'running' ? 'Running' : status === 'success' ? 'Passed' : 'Needs review'}</span></div><div className="log-list" role="log" aria-live="polite"><p className="log-command">$ summit run --target "{hardware}" --branch {branch} --suite "{suite}"</p>{logs.length === 0 && <p className="log-empty">Your run output will appear here.</p>}{logs.map((log, index) => <p key={index + log}><span>{String(index + 1).padStart(2, '0')}</span>{log}</p>)}</div>{status === 'failed' && <div className="diagnosis"><div><strong>Investigate the failure</strong><p>Inspect a sample root cause summary for this simulated fault.</p></div><button type="button" onClick={diagnose} disabled={diagnosing || diagnosed}>{diagnosing ? 'Analyzing…' : diagnosed ? 'Analysis ready' : 'Analyze fault'} <ArrowUpRight size={16} /></button></div>}{diagnosed && <div className="diagnosis-result" role="status"><strong>Likely cause · simulated</strong><p>{diagnosis}</p></div>}</div></Reveal></div></section>;
+
+  useEffect(() => () => {
+    window.clearInterval(timer.current);
+    window.clearTimeout(diagnosisTimer.current);
+  }, []);
+
+  const reset = () => {
+    window.clearInterval(timer.current);
+    window.clearTimeout(diagnosisTimer.current);
+    setView('configure');
+    setStatus('idle');
+    setLogs([]);
+    setDiagnosing(false);
+    setDiagnosed(false);
+  };
+
+  const run = () => {
+    window.clearInterval(timer.current);
+    window.clearTimeout(diagnosisTimer.current);
+    setView('output');
+    setStatus('running');
+    setLogs([]);
+    setDiagnosed(false);
+    setDiagnosing(false);
+    let step = 0;
+    timer.current = window.setInterval(() => {
+      if (step < simulationSteps.length) {
+        setLogs(current => [...current, simulationSteps[step]]);
+        step += 1;
+      } else {
+        window.clearInterval(timer.current);
+        setLogs(current => [...current, injectError ? 'Validation stopped: readback mismatch on hardware runner' : 'Validation complete: all checks passed']);
+        setStatus(injectError ? 'failed' : 'success');
+      }
+    }, 650);
+  };
+
+  const diagnose = () => {
+    setDiagnosing(true);
+    diagnosisTimer.current = window.setTimeout(() => {
+      setDiagnosing(false);
+      setDiagnosed(true);
+    }, 1200);
+  };
+  const diagnosis = hardware === 'SSD Gen5 NVMe'
+    ? 'The NVMe write path may cross a DMA page boundary, causing a readback mismatch. Check buffer alignment in the validation stage.'
+    : hardware === 'Micron NAND LPDDR5'
+      ? 'The validation driver may read refresh registers before the LPDDR5 training cycle settles. Check the harness timing.'
+      : 'The executor may have lost its heartbeat while buffering logs. Check runner connectivity and socket limits.';
+
+  return <div className="inline-lab" role="region" aria-label="Interactive firmware validation simulation">
+    <div className="inline-lab-head"><div><span>Interactive / simulated</span><h4 tabIndex={-1}>Run firmware validation</h4></div><button type="button" onClick={onClose} aria-label="Close simulation"><X size={18} /></button></div>
+    <p className="inline-lab-note">An illustrative workflow with simulated data. No connection to Micron systems.</p>
+    {view === 'configure' ? <div className="inline-lab-controls">
+      <div className="inline-lab-field-row">
+        <label>Hardware platform<select value={hardware} onChange={event => setHardware(event.target.value)}><option>SSD Gen5 NVMe</option><option>Micron NAND LPDDR5</option><option>NorFlash Edge Device</option></select></label>
+        <label>Repository branch<select value={branch} onChange={event => setBranch(event.target.value)}><option>feature/rca-agent</option><option>main</option><option>release/v4.2</option><option>hotfix/bootloader</option></select></label>
+      </div>
+      <label>Test suite<select value={suite} onChange={event => setSuite(event.target.value)}><option>Nightly Validation Suite</option><option>CI/CD PR Unit Checks</option><option>Weekly Release Validation</option></select></label>
+      <label className="checkbox-row"><input type="checkbox" checked={injectError} onChange={event => setInjectError(event.target.checked)} /> Simulate a validation fault</label>
+      <button className="button button-dark inline-lab-run" type="button" onClick={run}>Run validation <ArrowRight size={17} /></button>
+    </div> : <div className="inline-lab-output">
+      <div className="inline-lab-output-head"><strong>Execution log</strong><span className={'run-status status-' + status}>{status === 'running' ? 'Running' : status === 'success' ? 'Passed' : 'Needs review'}</span></div>
+      <div className="log-list" role="log" aria-live="polite"><p className="log-command">$ summit run --target "{hardware}" --branch {branch} --suite "{suite}"</p>{logs.map((log, index) => <p key={index + log}><span>{String(index + 1).padStart(2, '0')}</span>{log}</p>)}</div>
+      {status === 'failed' && <div className="diagnosis"><div><strong>Investigate the failure</strong><p>Inspect a sample root cause summary.</p></div><button type="button" onClick={diagnose} disabled={diagnosing || diagnosed}>{diagnosing ? 'Analyzing…' : diagnosed ? 'Analysis ready' : 'Analyze fault'} <ArrowUpRight size={16} /></button></div>}
+      {diagnosed && <div className="diagnosis-result" role="status"><strong>Likely cause · simulated</strong><p>{diagnosis}</p></div>}
+      <button className="inline-lab-reset" type="button" onClick={reset}>Configure another run <ArrowRight size={15} /></button>
+    </div>}
+  </div>;
 }
 
 function About() {
@@ -105,4 +188,20 @@ function Recognition() {
 
 function Footer() { return <footer className="site-footer"><div className="page-width footer-inner"><a className="wordmark" href="#home">Suyash<span>Singh</span><i>.</i></a><span>Designed and engineered by Suyash Singh · © {new Date().getFullYear()}</span><a href="#home">Back to top ↑</a></div></footer>; }
 
-export default function PortfolioPage() { return <><a className="skip-link" href="#work">Skip to work</a><Header /><main><Hero /><Work /><Experience /><SummitLab /><About /><Recognition /><Contact /></main><Footer /></>; }
+export default function PortfolioPage() {
+  const [labOpen, setLabOpen] = useState(false);
+  const openLab = () => {
+    setLabOpen(true);
+    window.requestAnimationFrame(() => {
+      const panel = document.getElementById('summit');
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      panel?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' });
+      panel?.querySelector('.inline-lab-head h4')?.focus({ preventScroll: true });
+    });
+  };
+  const closeLab = () => {
+    setLabOpen(false);
+    window.requestAnimationFrame(() => document.querySelector('.simulation-trigger')?.focus({ preventScroll: true }));
+  };
+  return <><a className="skip-link" href="#experience">Skip to experience</a><Header onOpenLab={openLab} /><main><Hero /><Experience /><Work labOpen={labOpen} onOpenLab={openLab} onCloseLab={closeLab} /><About /><Recognition /><Contact /></main><Footer /></>;
+}

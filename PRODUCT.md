@@ -16,7 +16,7 @@ Present Suyash's backend and distributed systems work clearly, with enough concr
 
 ## Operating Context
 
-Visitors scan work experience, selected projects, skills, education, and an interactive simulation of the Summit test orchestration platform.
+Visitors scan work experience before selected projects, then explore skills, education, and an embedded simulation of the distributed orchestration workflow.
 
 ## Capabilities and Constraints
 
@@ -32,9 +32,8 @@ Visitors scan work experience, selected projects, skills, education, and an inte
 ## Evidence on Hand
 
 - Work history and skills in `src/data/portfolioData.js`.
-- Project descriptions in `src/components/Projects.js`.
-- Portrait assets in `src/profile.png` and `src/about_photo.jpeg`.
-- Existing Summit simulation in `src/components/SummitSimulator.js`.
+- Project descriptions and the interactive simulation in `src/PortfolioPage.js`.
+- Portrait asset in `src/profile.png`.
 - Current 2026 résumé supplied by the user for portfolio wording and dates; the live résumé action points to the user-provided Google Drive URL.
 
 ## Product Principles

@@ -20,3 +20,22 @@ test('shows the current résumé and lets visitors switch project categories', (
   expect(screen.getByRole('heading', { name: 'FmCUI' })).toBeInTheDocument();
   expect(screen.getByRole('tab', { name: 'Independent' })).toHaveAttribute('aria-selected', 'true');
 });
+
+test('opens the simulator in place of the Summit diagram and restores the diagram', () => {
+  const requestAnimationFrame = window.requestAnimationFrame;
+  window.requestAnimationFrame = jest.fn();
+
+  try {
+    render(<App />);
+    expect(screen.getByText('API + state')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Try the interactive simulation' }));
+    expect(screen.queryByText('API + state')).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Interactive firmware validation simulation' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close simulation' }));
+    expect(screen.getByText('API + state')).toBeInTheDocument();
+  } finally {
+    window.requestAnimationFrame = requestAnimationFrame;
+  }
+});

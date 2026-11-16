@@ -69,7 +69,7 @@ Rethink Sans is used for both display and reading text. Large headings use tight
 
 ## Layout
 
-The content width is 1320px with 40px desktop gutters and 18px mobile gutters. Sections use 120px vertical padding on desktop and 78px on mobile. Desktop content favors asymmetric two-column compositions; at 700px it stacks into one column.
+The content width is 1320px with 40px desktop gutters and 18px mobile gutters. Experience follows the hero, then the selected systems and projects. Sections use 120px vertical padding on desktop and 78px on mobile. Desktop content favors asymmetric two-column compositions; at 700px it stacks into one column.
 
 ## Elevation & Depth
 
@@ -82,9 +82,10 @@ Buttons, inputs, and major surfaces have square corners. Small technology tags a
 ## Components
 
 - Primary actions use black fill and white text, with a navy hover state.
+- The Summit diagram reads as a four-stage technical flow from API and scheduling through hardware execution and telemetry. Its action replaces the diagram with an interactive simulation in the same space.
 - The project category switcher uses a dark selected tab in a thin outlined group.
 - Project and experience entries are open rows separated by rules, without enclosing cards.
-- The lab uses a two-column bordered work surface, with the execution log set in monospace.
+- The compact simulation shows configuration first, then the execution log and optional fault analysis. The log uses monospace type.
 - All interactive controls have a visible keyboard focus outline.
 
 ## Do's and Don'ts
